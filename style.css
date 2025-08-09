@@ -1,152 +1,519 @@
-/* =========================
-   Jiffy.js Pro UI + Dark Mode + Animation
-   ========================= */
-:root {
-    --radius: 14px;
-    --shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-    --transition: all 0.3s ease;
-    --primary-grad: linear-gradient(135deg, #6d5dfc, #46c3db);
-    --text-color: #1f2937;
-    --bg-color: #f3f4f6;
+/* ======================================================
+   Jiffy.js — Professional UI Styles (Comprehensive)
+   ~ Ready to copy-paste (≈300 lines)
+   Features:
+   - Light & Dark mode (auto)
+   - Glass cards, buttons, inputs, controls
+   - Many utility classes & animations
+   - Responsive helpers and accessibility tweaks
+   ====================================================== */
+
+/* -------------------------
+   Root variables (global)
+   ------------------------- */
+:root{
+  /* Colors & gradients */
+  --primary-1: #6d5dfc;
+  --primary-2: #46c3db;
+  --accent-blue: #3b82f6;
+  --accent-purple: #8b5cf6;
+  --accent-pink: #ec4899;
+  --success: #22c55e;
+  --danger: #ef4444;
+  --warning: #f59e0b;
+  --info: #2563eb;
+
+  --gradient-main: linear-gradient(135deg,var(--primary-1),var(--primary-2));
+  --glass-bg: rgba(255,255,255,0.88);
+  --glass-border: rgba(255,255,255,0.14);
+  --glass-dark-bg: rgba(17,24,39,0.72);
+
+  /* Spacing & sizing */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2.5rem;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+
+  --shadow-xs: 0 4px 10px rgba(0,0,0,0.06);
+  --shadow-md: 0 10px 30px rgba(0,0,0,0.12);
+  --shadow-lg: 0 25px 50px -12px rgba(0,0,0,0.25);
+
+  --transition-fast: 150ms cubic-bezier(.4,0,.2,1);
+  --transition: 300ms cubic-bezier(.4,0,.2,1);
+
+  --text-default: #0f172a;
+  --muted: #64748b;
+  --bg-surface: #f8fafc;
+
+  /* Accessibility */
+  --focus-ring: 0 0 0 4px rgba(59,130,246,0.12);
 }
 
-/* Dark mode auto */
-@media (prefers-color-scheme: dark) {
-    :root {
-        --primary-grad: linear-gradient(135deg, #8b80ff, #4dd6e6);
-        --text-color: #f3f4f6;
-        --bg-color: #111827;
-    }
+/* -------------------------
+   Dark mode (auto)
+   ------------------------- */
+@media(prefers-color-scheme: dark){
+  :root{
+    --glass-bg: rgba(17,24,39,0.75);
+    --glass-border: rgba(255,255,255,0.06);
+    --bg-surface: #0b1220;
+    --text-default: #e6eef8;
+    --muted: #9aa9c4;
+  }
 }
 
-* {
-    box-sizing: border-box;
-    font-family: 'Inter', system-ui, sans-serif;
-    margin: 0;
-    padding: 0;
+/* -------------------------
+   Resets & base
+   ------------------------- */
+*,
+*::before,
+*::after{ box-sizing: border-box; }
+
+html,body{ height:100%; }
+
+body{
+  margin:0;
+  font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  background: var(--gradient-main);
+  color: var(--text-default);
+  min-height:100vh;
+  line-height:1.4;
+  -webkit-tap-highlight-color: transparent;
 }
 
-body {
-    background: var(--primary-grad);
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 2rem;
-    color: var(--text-color);
+/* subtle diagonal pattern overlay */
+body::before{
+  content:'';
+  position:fixed;
+  inset:0;
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='30' cy='30' r='2' fill='%23ffffff' fill-opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events:none;
+  z-index:0;
 }
 
-/* Pattern Overlay */
-body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: url('data:image/svg+xml,<svg width="60" height="60" xmlns="http://www.w3.org/2000/svg"><circle cx="30" cy="30" r="1.5" fill="%23ffffff" fill-opacity="0.05"/></svg>');
-    z-index: 0;
-    pointer-events: none;
+/* -------------------------
+   Layout helpers
+   ------------------------- */
+.container{
+  width:100%;
+  max-width:1200px;
+  margin-inline:auto;
+  padding: 0 var(--space-lg);
 }
 
-/* Glass Card */
-.jiffy-card {
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(18px);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    padding: 2rem;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    position: relative;
-    z-index: 1;
-    animation: jiffy-fade-slide 0.6s ease both;
+/* center helper */
+.center{
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
 
-/* Dark mode card */
-@media (prefers-color-scheme: dark) {
-    .jiffy-card {
-        background: rgba(17, 24, 39, 0.85);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-    }
+/* stack vertical */
+.stack{ display:flex; flex-direction:column; gap:var(--space-md); }
+
+/* row */
+.row{ display:flex; gap:var(--space-md); align-items:center; }
+
+/* responsive columns */
+.cols-2{ display:grid; grid-template-columns: 1fr 1fr; gap:var(--space-md); }
+@media (max-width:800px){ .cols-2{ grid-template-columns: 1fr; } }
+
+/* -------------------------
+   Glass card (primary)
+   ------------------------- */
+.jiffy-card{
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px) saturate(120%);
+  -webkit-backdrop-filter: blur(16px) saturate(120%);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: var(--space-lg);
+  position:relative;
+  z-index:1;
+  transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+  will-change: transform, opacity;
 }
 
-/* Gradient Text */
-.jiffy-text-gradient {
-    background: var(--primary-grad);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+/* small card */
+.jiffy-card.sm{ padding: var(--space-md); border-radius: var(--radius-md); }
+
+/* card hover lift */
+.jiffy-card:hover{ transform: translateY(-8px); box-shadow: 0 30px 60px rgba(0,0,0,0.28); }
+
+/* -------------------------
+   Headings & section decor
+   ------------------------- */
+.h1{
+  font-size:1.6rem;
+  font-weight:700;
+  margin:0 0 var(--space-sm) 0;
+  letter-spacing:-0.02em;
 }
 
-/* Pro Button */
-.jiffy-btn {
-    display: inline-block;
-    padding: 0.8rem 1.6rem;
-    font-weight: 600;
-    border-radius: var(--radius);
-    background: var(--primary-grad);
-    color: white;
-    border: none;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    transition: var(--transition);
-    animation: jiffy-fade-slide 0.6s ease both;
+.h2{ font-size:1.125rem; font-weight:700; margin:0 0 var(--space-sm) 0; }
+
+.section-header{
+  position:relative;
+  padding-left:18px;
+  margin-bottom:6px;
+}
+.section-header::before{
+  content:'';
+  position:absolute;
+  left:0;
+  top:50%;
+  transform:translateY(-50%);
+  width:6px;
+  height:36px;
+  border-radius:6px;
+  background: linear-gradient(180deg,var(--accent-blue),var(--accent-purple));
+  box-shadow:0 6px 18px rgba(59,130,246,0.12);
 }
 
-.jiffy-btn::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
-    left: -100%;
-    transition: left 0.5s ease;
+/* header underline decoration */
+.header-decoration::after{
+  content:'';
+  position:absolute;
+  left:50%;
+  transform:translateX(-50%);
+  bottom:-12px;
+  width:120px;
+  height:4px;
+  border-radius:6px;
+  background: linear-gradient(90deg,var(--accent-blue),var(--accent-purple),var(--accent-pink));
+  opacity:0.95;
 }
 
-.jiffy-btn:hover::before {
-    left: 100%;
+/* -------------------------
+   Gradient text utility
+   ------------------------- */
+.gradient-text{
+  background: var(--gradient-main);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-.jiffy-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 20px 40px -12px rgba(109, 93, 252, 0.4);
+/* -------------------------
+   Buttons
+   ------------------------- */
+.jiffy-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:0.6rem;
+  padding:0.65rem 1.2rem;
+  border-radius: 12px;
+  background: var(--gradient-main);
+  color:white;
+  font-weight:600;
+  border: none;
+  cursor:pointer;
+  transition: transform var(--transition), box-shadow var(--transition), opacity var(--transition);
+  position:relative;
+  overflow:hidden;
+  will-change: transform, opacity;
 }
 
-/* Hover Lift */
-.jiffy-hover {
-    transition: var(--transition);
+.jiffy-btn .icon{ display:inline-flex; align-items:center; justify-content:center; }
+
+/* shiny sweep */
+.jiffy-btn::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  left:-120%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
+  transition: left 500ms ease;
+}
+.jiffy-btn:hover::before{ left:120%; }
+.jiffy-btn:hover{ transform: translateY(-3px); box-shadow: 0 20px 44px rgba(0,0,0,0.18); }
+
+/* variants */
+.jiffy-btn.ghost{
+  background: transparent;
+  color: var(--text-default);
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.jiffy-btn.secondary{
+  background: linear-gradient(135deg,var(--accent-blue),var(--accent-purple));
+}
+.jiffy-btn.success{ background: linear-gradient(135deg,var(--success), #16a34a); }
+.jiffy-btn.danger{ background: linear-gradient(135deg,var(--danger), #dc2626); }
+
+/* button press feedback */
+.jiffy-btn:active{ transform: translateY(0) scale(0.98); transition: transform 120ms; }
+
+/* accessibility focus */
+.jiffy-btn:focus{ outline:none; box-shadow: var(--focus-ring); }
+
+/* small btn */
+.jiffy-btn.sm{ padding:0.4rem 0.9rem; font-size:0.9rem; border-radius:10px; }
+
+/* -------------------------
+   Inputs & form controls
+   ------------------------- */
+.jiffy-input{
+  display:block;
+  width:100%;
+  padding:0.7rem 0.9rem;
+  border-radius:10px;
+  border:1px solid rgba(15,23,42,0.06);
+  background: rgba(255,255,255,0.9);
+  transition: box-shadow var(--transition), border-color var(--transition), background var(--transition);
+  color:var(--text-default);
+  font-size:0.95rem;
+}
+@media (prefers-color-scheme: dark){
+  .jiffy-input{ background: rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.04); color:var(--text-default); }
 }
 
-.jiffy-hover:hover {
-    transform: translateY(-6px) scale(1.02);
-    box-shadow: 0 20px 40px -10px rgba(0,0,0,0.2);
+.jiffy-input:focus{
+  outline:none;
+  box-shadow: var(--focus-ring);
+  border-color: var(--accent-blue);
+  background: rgba(255,255,255,1);
 }
 
-/* Alerts */
-.jiffy-alert {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    padding: 1rem 1.5rem;
-    border-radius: var(--radius);
-    color: white;
-    font-weight: 600;
-    box-shadow: var(--shadow);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255,255,255,0.2);
-    z-index: 1000;
-    animation: jiffy-fade-slide 0.6s ease both;
+/* textarea */
+.jiffy-textarea{ min-height:120px; resize:vertical; }
+
+/* labels */
+.jiffy-label{ display:block; margin-bottom:0.35rem; font-weight:600; color:var(--muted); font-size:0.9rem; }
+
+/* form row */
+.form-row{ display:flex; gap:var(--space-sm); align-items:center; }
+
+/* toggle switch */
+.switch{
+  width:46px; height:26px; border-radius:999px; position:relative; background:#e6eef8; cursor:pointer;
+  border:1px solid rgba(15,23,42,0.04);
+}
+.switch .knob{
+  width:20px; height:20px; border-radius:50%; background:white; position:absolute; top:50%; left:4px;
+  transform:translateY(-50%); transition:left var(--transition), box-shadow var(--transition);
+  box-shadow: 0 4px 10px rgba(2,6,23,0.08);
+}
+.switch.on{ background: linear-gradient(90deg,var(--accent-blue),var(--accent-purple)); }
+.switch.on .knob{ left:22px; }
+
+/* -------------------------
+   Tabs & layer tabs
+   ------------------------- */
+.layer-tabs{ display:flex; gap:8px; align-items:center; }
+.layer-tab{
+  padding:0.5rem 0.9rem; border-radius:10px 10px 0 0; cursor:pointer; transition: var(--transition);
+  background: transparent; color: var(--muted); border:1px solid transparent;
+}
+.layer-tab.active{
+  background: linear-gradient(135deg,var(--accent-blue),var(--accent-purple));
+  color:white; transform: translateY(-4px); box-shadow: 0 12px 30px rgba(59,130,246,0.12);
+}
+.layer-tab:hover:not(.active){ background: rgba(59,130,246,0.06); color:var(--text-default); }
+
+/* -------------------------
+   Metric cards / KPI
+   ------------------------- */
+.metric-card{
+  background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(248,250,252,0.95));
+  border:1px solid rgba(59,130,246,0.06);
+  border-radius:14px;
+  padding:var(--space-md);
+  box-shadow: var(--shadow-md);
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+@media (prefers-color-scheme: dark){
+  .metric-card{ background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border:1px solid rgba(255,255,255,0.04); }
+}
+.metric-card:hover{ transform: translateY(-8px) scale(1.02); box-shadow: 0 30px 60px rgba(59,130,246,0.08); }
+
+/* metric number */
+.metric-number{ font-size:1.6rem; font-weight:700; color:var(--text-default); }
+
+/* metric caption */
+.metric-caption{ color:var(--muted); font-size:0.9rem; }
+
+/* -------------------------
+   Loading indicators
+   ------------------------- */
+.loading-spinner{
+  width:40px; height:40px; border-radius:50%;
+  border:4px solid rgba(59,130,246,0.18); border-left-color:var(--accent-blue);
+  animation: jiffy-spin 1s linear infinite;
+}
+@keyframes jiffy-spin{ to { transform: rotate(360deg); } }
+
+.jiffy-loading-dots{ display:inline-flex; gap:6px; align-items:center; }
+.jiffy-loading-dots span{
+  width:8px; height:8px; border-radius:50%; background:var(--accent-blue);
+  animation: jiffy-dots 1.4s infinite ease-in-out;
+}
+.jiffy-loading-dots span:nth-child(1){ animation-delay:-0.32s; }
+.jiffy-loading-dots span:nth-child(2){ animation-delay:-0.16s; }
+@keyframes jiffy-dots{
+  0%, 80%, 100%{ transform: scale(0); opacity:0.4; }
+  40%{ transform: scale(1); opacity:1; }
 }
 
-.jiffy-alert.success { background: linear-gradient(135deg, #22c55e, #16a34a); }
-.jiffy-alert.error { background: linear-gradient(135deg, #ef4444, #dc2626); }
-.jiffy-alert.warning { background: linear-gradient(135deg, #f59e0b, #d97706); }
-.jiffy-alert.info { background: linear-gradient(135deg, #3b82f6, #2563eb); }
-
-/* Animation Keyframes */
-@keyframes jiffy-fade-slide {
-    from {
-        opacity: 0;
-        transform: translateY(15px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+/* progress bar */
+.jiffy-progress{
+  height:8px; border-radius:999px; background:linear-gradient(90deg,#e6eef8,#edf2ff);
+  overflow:hidden;
 }
+.jiffy-progress .bar{
+  height:100%; width:0%; transform-origin:left; animation: jiffy-progress-fill 2s ease forwards;
+  background: linear-gradient(90deg,var(--accent-blue),var(--accent-purple),var(--accent-pink));
+  border-radius:999px;
+}
+@keyframes jiffy-progress-fill{ 0%{ width:0%; } 100%{ width:100%; } }
+
+/* -------------------------
+   Alerts (floating)
+   ------------------------- */
+.jiffy-alert{
+  position:fixed;
+  top:20px; right:20px;
+  padding:1rem 1.25rem;
+  border-radius:14px;
+  color:white; font-weight:700;
+  box-shadow: var(--shadow-lg);
+  backdrop-filter: blur(10px);
+  border:1px solid var(--glass-border);
+  z-index:10000;
+  transform-origin: top right;
+  transition: transform var(--transition), opacity var(--transition);
+}
+.jiffy-alert.success{ background: linear-gradient(135deg,var(--success), #16a34a); }
+.jiffy-alert.error{ background: linear-gradient(135deg,var(--danger), #dc2626); }
+.jiffy-alert.warning{ background: linear-gradient(135deg,var(--warning), #d97706); }
+.jiffy-alert.info{ background: linear-gradient(135deg,var(--accent-blue), var(--info)); }
+
+/* close button inside alert */
+.jiffy-alert .close{
+  background: rgba(255,255,255,0.12); border-radius:8px; padding:4px; margin-left:8px; cursor:pointer;
+}
+
+/* -------------------------
+   3D container & canvas style
+   ------------------------- */
+#threejs-container{
+  width:100%; height:380px; border-radius:18px; overflow:hidden;
+  box-shadow: var(--shadow-lg); background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.02));
+  border:1px solid rgba(255,255,255,0.04);
+}
+
+/* -------------------------
+   Controls & sliders
+   ------------------------- */
+.control-panel{
+  padding:var(--space-md);
+  border-radius:12px;
+  background: var(--glass-bg);
+  border:1px solid var(--glass-border);
+  box-shadow: var(--shadow-md);
+}
+.control-slider{
+  -webkit-appearance:none; appearance:none; width:100%; height:8px; border-radius:999px;
+  background: linear-gradient(90deg, #e6eef8, #dbeafe);
+  outline:none;
+}
+.control-slider::-webkit-slider-thumb{
+  -webkit-appearance:none; appearance:none; width:18px; height:18px; border-radius:50%;
+  background: linear-gradient(135deg,var(--accent-blue),var(--accent-purple));
+  box-shadow: 0 6px 18px rgba(59,130,246,0.12);
+  border:none; cursor:pointer;
+}
+.control-slider::-moz-range-thumb{
+  width:18px; height:18px; border-radius:50%; background: linear-gradient(135deg,var(--accent-blue),var(--accent-purple));
+  border:none; box-shadow: 0 6px 18px rgba(59,130,246,0.12);
+}
+
+/* -------------------------
+   Small utilities
+   ------------------------- */
+.kv-row{ display:flex; justify-content:space-between; gap:var(--space-md); align-items:center; }
+.muted{ color:var(--muted); font-size:0.9rem; }
+.small{ font-size:0.85rem; }
+.uppercase{ text-transform:uppercase; letter-spacing:0.08em; font-weight:700; }
+
+/* spacing helpers */
+.mt-1{ margin-top:0.25rem; } .mt-2{ margin-top:0.5rem; } .mt-3{ margin-top:1rem; }
+.mb-1{ margin-bottom:0.25rem; } .mb-2{ margin-bottom:0.5rem; } .mb-3{ margin-bottom:1rem; }
+.p-1{ padding:0.5rem; } .p-2{ padding:1rem; } .p-3{ padding:1.5rem; }
+
+/* width helpers */
+.w-100{ width:100%; } .w-75{ width:75%; } .w-50{ width:50%; }
+
+/* text align */
+.t-center{ text-align:center; } .t-right{ text-align:right; }
+
+/* icon badge */
+.icon-badge{
+  display:inline-flex; align-items:center; justify-content:center;
+  min-width:36px; height:36px; border-radius:10px; background: linear-gradient(135deg,var(--accent-blue),var(--accent-purple));
+  color:white; font-weight:700;
+}
+
+/* -------------------------
+   Animations (Jiffy collection)
+   ------------------------- */
+.jiffy-bounce{ animation: jiffy-bounce 600ms cubic-bezier(.68,-0.55,.265,1.55) both; }
+@keyframes jiffy-bounce{
+  0%{ transform: scale(0.3) rotate(-8deg); opacity:0; }
+  50%{ transform: scale(1.05) rotate(6deg); }
+  70%{ transform: scale(0.9) rotate(-2deg); }
+  100%{ transform: scale(1) rotate(0); opacity:1; }
+}
+
+.jiffy-slide-up{ animation: jiffy-slide-up 700ms cubic-bezier(.25,.46,.45,.94) both; }
+@keyframes jiffy-slide-up{ from{ transform: translateY(24px); opacity:0; } to{ transform: translateY(0); opacity:1; } }
+
+.jiffy-fade-in{ animation: jiffy-fade-in 480ms ease both; }
+@keyframes jiffy-fade-in{ from{ opacity:0; } to{ opacity:1; } }
+
+.jiffy-pulse{ animation: jiffy-pulse 2000ms infinite ease-in-out; }
+@keyframes jiffy-pulse{ 0%{ transform:scale(1); } 50%{ transform:scale(1.04); } 100%{ transform:scale(1); } }
+
+.jiffy-zoom-in{ animation: jiffy-zoom-in 420ms cubic-bezier(.25,.46,.45,.94) both; }
+@keyframes jiffy-zoom-in{ from{ transform:scale(0); opacity:0; } to{ transform:scale(1); opacity:1; } }
+
+.jiffy-elastic{ animation: jiffy-elastic 900ms cubic-bezier(.68,-0.55,.265,1.55) both; }
+@keyframes jiffy-elastic{ 0%{ transform:scale(0); } 50%{ transform:scale(1.2); } 100%{ transform:scale(1); } }
+
+/* stagger helpers */
+.jiffy-stagger-1{ animation-delay: 0.08s; } .jiffy-stagger-2{ animation-delay: 0.16s; } .jiffy-stagger-3{ animation-delay: 0.24s; }
+.jiffy-stagger-4{ animation-delay: 0.32s; } .jiffy-stagger-5{ animation-delay: 0.4s; }
+
+/* -------------------------
+   Accessibility & reduced motion
+   ------------------------- */
+@media (prefers-reduced-motion: reduce){
+  *{ animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
+}
+
+/* -------------------------
+   Responsive tweaks
+   ------------------------- */
+@media (max-width: 900px){
+  .jiffy-card{ padding: var(--space-md); border-radius: var(--radius-md); }
+  .h1{ font-size:1.25rem; }
+  #threejs-container{ height:260px; }
+}
+
+/* -------------------------
+   Example utilities for dev use
+   (optional: remove in production)
+   ------------------------- */
+.debug-outline *{ outline: 1px dashed rgba(255,0,0,0.06); }
+.debug-grid{ background-image: linear-gradient(rgba(0,0,0,0.02) 1px, transparent 1px); background-size: 24px 24px; }
+
+/* -------------------------
+   End of stylesheet
+   ------------------------- */
