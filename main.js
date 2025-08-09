@@ -482,7 +482,7 @@
                     <div class="grid grid-cols-2 gap-6 mb-6">
                         <div class="text-center jiffy-bounce jiffy-stagger-1">
                             <div class="text-4xl font-bold gradient-text">${optimal.totalBoxes}</div>
-                            <div class="text-sm font-semibold text-gray-600">Total Kotak</div>
+                            <div class="text-sm font-semibold text-gray-600">Total MC</div>
                         </div>
                         <div class="text-center jiffy-bounce jiffy-stagger-2">
                             <div class="text-4xl font-bold gradient-text">${optimal.efficiency}%</div>
@@ -490,11 +490,11 @@
                         </div>
                         <div class="text-center jiffy-bounce jiffy-stagger-3">
                             <div class="text-2xl font-bold text-gray-700">${optimal.boxesPerLayer}</div>
-                            <div class="text-sm font-semibold text-gray-600">Kotak per Lapisan</div>
+                            <div class="text-sm font-semibold text-gray-600">Kotak per Sap</div>
                         </div>
                         <div class="text-center jiffy-bounce jiffy-stagger-4">
                             <div class="text-2xl font-bold text-gray-700">${optimal.layers}</div>
-                            <div class="text-sm font-semibold text-gray-600">Lapisan Tinggi</div>
+                            <div class="text-sm font-semibold text-gray-600">Tinggi Sap</div>
                         </div>
                     </div>
                 </div>
