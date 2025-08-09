@@ -1,5 +1,5 @@
 /* =========================================================
-   Jiffy.js Pro UI Framework
+   Jiffy.js Pro UI Framework - Mobile Ready
    Versi Pabrik • Premium Look • 300+ Baris
    ========================================================= */
 
@@ -84,6 +84,7 @@ h1, h2, h3, h4, h5, h6 {
     position: relative;
     z-index: 1;
     animation: jiffy-fade-slide 0.6s ease both;
+    max-width: 500px;
 }
 @media (prefers-color-scheme: dark) {
     .jiffy-card {
@@ -147,6 +148,7 @@ h1, h2, h3, h4, h5, h6 {
     background: var(--glass-light);
     backdrop-filter: blur(10px);
     box-shadow: var(--shadow);
+    flex-wrap: wrap;
 }
 .jiffy-navbar a {
     text-decoration: none;
@@ -184,6 +186,8 @@ h1, h2, h3, h4, h5, h6 {
     border-radius: var(--radius);
     box-shadow: var(--shadow);
     animation: jiffy-fade-slide 0.4s ease both;
+    width: 90%;
+    max-width: 500px;
 }
 @media (prefers-color-scheme: dark) {
     .jiffy-modal-content { background: var(--glass-dark); }
@@ -268,4 +272,46 @@ h1, h2, h3, h4, h5, h6 {
 @keyframes jiffy-fade-slide {
     from { opacity: 0; transform: translateY(15px); }
     to { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------- Mobile Responsive ---------- */
+@media (max-width: 768px) {
+    body {
+        padding: 1rem;
+        font-size: 0.95rem;
+    }
+    .jiffy-navbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .jiffy-navbar a {
+        margin: 0.4rem 0;
+    }
+    .jiffy-card {
+        width: 100%;
+        padding: 1.5rem;
+    }
+    .jiffy-btn {
+        width: 100%;
+        text-align: center;
+    }
+    .jiffy-alert {
+        right: 10px;
+        left: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 { font-size: 1.4rem; }
+    h2 { font-size: 1.2rem; }
+    .jiffy-card {
+        padding: 1rem;
+    }
+    .jiffy-btn {
+        padding: 0.7rem 1rem;
+        font-size: 0.9rem;
+    }
+    .jiffy-input {
+        padding: 0.6rem;
+    }
 }
