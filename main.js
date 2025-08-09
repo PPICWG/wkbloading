@@ -237,7 +237,7 @@
 
                 displayResults();
                 createVisualization();
-                showJiffyAlert('Perhitungan selesai! 🎉', 'success');
+                showJiffyAlert('Perhitungan selesai!', 'success');
             }, 2000);
         }
 
@@ -913,8 +913,8 @@
             let html = `
                 <div class="w-full jiffy-zoom-in" style="background: linear-gradient(135deg, #1e293b 0%, #334155 50%, #475569 100%); border-radius: 24px; padding: ${isMobile ? '24px' : '40px'}; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);">
                     <div class="mb-6 text-center">
-                        <h4 class="text-xl lg:text-2xl font-bold text-white mb-2">📐 Layout Visualization</h4>
-                        <p class="text-sm lg:text-base text-slate-300">Tampak belakang kontainer dengan penataan kotak optimal</p>
+                        <h4 class="text-xl lg:text-2xl font-bold text-white mb-2">Layout Visualization</h4>
+                        <p class="text-sm lg:text-base text-slate-300">Tampak belakang kontainer dengan penataan MC optimal</p>
                     </div>
                     
                     <svg width="${svgWidth}" height="${svgHeight}" viewBox="0 0 ${svgWidth} ${svgHeight}" class="mx-auto" style="background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%); border-radius: 16px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);">
