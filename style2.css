@@ -1,0 +1,516 @@
+/* =========================================================
+   Jiffy.js Pro — Production CSS (Extended)
+   ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+   - Lengkap: navbar, sidebar, cards, modal, tooltip, toast,
+     forms, tables, skeleton, charts, animations, utilities
+   - Responsive (mobile-first), Dark Mode auto, Reduced-motion
+   - Ready to copy-paste
+   ========================================================= */
+
+/* --------------------------
+   ROOT VARIABLES
+   -------------------------- */
+:root{
+  /* primary palette */
+  --p1: #6d5dfc;
+  --p2: #46c3db;
+  --accent-blue: #3b82f6;
+  --accent-purple: #8b5cf6;
+  --accent-pink: #ec4899;
+
+  /* semantic */
+  --success: #22c55e;
+  --danger: #ef4444;
+  --warning: #f59e0b;
+  --info: #2563eb;
+
+  /* gradient shortcuts */
+  --grad-main: linear-gradient(135deg,var(--p1),var(--p2));
+  --grad-accent: linear-gradient(135deg,var(--accent-blue),var(--accent-purple));
+
+  /* surfaces */
+  --glass-light: rgba(255,255,255,0.88);
+  --glass-mid: rgba(255,255,255,0.72);
+  --glass-dark: rgba(17,24,39,0.82);
+
+  /* typography & spacing */
+  --font-sans: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  --text: #0f172a;
+  --muted: #64748b;
+
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+
+  --space-xxs: 4px;
+  --space-xs: 8px;
+  --space-sm: 12px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+
+  --shadow-xs: 0 6px 18px rgba(2,6,23,0.06);
+  --shadow-md: 0 12px 30px rgba(2,6,23,0.10);
+  --shadow-lg: 0 30px 60px rgba(2,6,23,0.18);
+
+  --transition-fast: 160ms cubic-bezier(.4,0,.2,1);
+  --transition: 300ms cubic-bezier(.4,0,.2,1);
+
+  --focus-ring: 0 0 0 6px rgba(59,130,246,0.12);
+
+  /* breakpoints */
+  --bp-sm: 480px;
+  --bp-md: 768px;
+  --bp-lg: 1024px;
+  --bp-xl: 1200px;
+}
+
+/* Dark mode auto adjustments */
+@media (prefers-color-scheme: dark){
+  :root{
+    --glass-light: rgba(17,24,39,0.78);
+    --glass-mid: rgba(17,24,39,0.68);
+    --text: #e6eef8;
+    --muted: #9aa9c4;
+    --shadow-lg: 0 30px 60px rgba(0,0,0,0.6);
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce){
+  :root{ --transition: 50ms linear; --transition-fast: 50ms linear; }
+}
+
+/* --------------------------
+   RESET & BASE
+   -------------------------- */
+*, *::before, *::after{ box-sizing: border-box; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
+html,body{ height:100%; }
+body{
+  margin:0;
+  font-family: var(--font-sans);
+  background: var(--grad-main);
+  color: var(--text);
+  -webkit-tap-highlight-color: transparent;
+  line-height:1.4;
+  min-height:100vh;
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  padding: var(--space-lg);
+}
+
+/* subtle svg pattern overlay */
+body::before{
+  content:'';
+  position:fixed; inset:0;
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='30' cy='30' r='2' fill='%23ffffff' fill-opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events:none;
+  z-index:0;
+}
+
+/* container utility */
+.container{ width:100%; max-width:1200px; margin-inline:auto; }
+
+/* --------------------------
+   LAYOUT: NAVBAR & SIDEBAR
+   -------------------------- */
+/* navbar top */
+.jiffy-navbar{
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:var(--space-md);
+  padding: calc(var(--space-sm)) var(--space-md);
+  background: var(--glass-light);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  border: 1px solid rgba(255,255,255,0.12);
+  z-index: 50;
+}
+.jiffy-navbar .brand{ display:flex; gap:10px; align-items:center; font-weight:700; font-size:1.05rem; }
+.jiffy-navbar .nav-links{ display:flex; gap:8px; align-items:center; }
+.jiffy-navbar .nav-links a{ color:var(--text); text-decoration:none; padding:8px 10px; border-radius:10px; transition:var(--transition); }
+.jiffy-navbar .nav-links a:hover{ background: linear-gradient(90deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02)); }
+
+/* hamburger for mobile */
+.jiffy-navbar .hamburger{ display:none; background:transparent; border:none; cursor:pointer; padding:8px; border-radius:8px; }
+.jiffy-navbar .hamburger:focus{ box-shadow:var(--focus-ring); outline:none; }
+
+/* sidebar layout (optional) */
+.jiffy-layout{
+  display:grid;
+  grid-template-columns: 280px 1fr;
+  gap:var(--space-lg);
+  width:100%;
+  margin-top: var(--space-lg);
+}
+@media (max-width: var(--bp-md)){
+  .jiffy-layout{ grid-template-columns: 1fr; }
+}
+
+/* sidebar */
+.jiffy-sidebar{
+  background: var(--glass-light);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md);
+  box-shadow: var(--shadow-md);
+  border:1px solid rgba(255,255,255,0.12);
+  height: fit-content;
+}
+.jiffy-sidebar .menu{ display:flex; flex-direction:column; gap:8px; }
+.jiffy-sidebar .menu a{ padding:10px; border-radius:10px; text-decoration:none; color:var(--text); display:flex; gap:10px; align-items:center; transition:var(--transition); }
+.jiffy-sidebar .menu a:hover{ background: linear-gradient(90deg, rgba(59,130,246,0.06), rgba(139,92,246,0.04)); transform: translateX(4px); }
+
+/* --------------------------
+   CARD COMPONENTS
+   -------------------------- */
+.jiffy-card{
+  background: var(--glass-light);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  border:1px solid rgba(255,255,255,0.12);
+  box-shadow: var(--shadow-lg);
+  transition: transform var(--transition), box-shadow var(--transition);
+  will-change: transform, opacity;
+}
+.jiffy-card:hover{ transform: translateY(-8px); box-shadow: 0 40px 90px rgba(2,6,23,0.12); }
+
+/* compact card */
+.jiffy-card.sm{ padding: var(--space-md); border-radius: var(--radius-md); }
+
+/* card header */
+.jiffy-card .card-head{ display:flex; align-items:center; justify-content:space-between; gap: var(--space-md); margin-bottom: var(--space-md); }
+.jiffy-card .card-title{ font-weight:800; font-size:1.05rem; }
+
+/* card footer actions */
+.jiffy-card .card-actions{ display:flex; gap:8px; align-items:center; }
+
+/* image & media */
+.jiffy-media{ border-radius:12px; overflow:hidden; display:block; width:100%; height:auto; object-fit:cover; }
+
+/* --------------------------
+   TYPOGRAPHY & TEXT UTILITIES
+   -------------------------- */
+.h1{ font-size:1.5rem; font-weight:800; margin:0 0 var(--space-sm) 0; }
+.h2{ font-size:1.125rem; font-weight:700; margin:0 0 var(--space-sm) 0; }
+.muted{ color:var(--muted); font-size:0.92rem; }
+
+/* gradient text */
+.jiffy-text-gradient{ background: var(--grad-main); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+
+/* small text */
+.small{ font-size:0.85rem; color:var(--muted); }
+
+/* --------------------------
+   BUTTONS
+   -------------------------- */
+.jiffy-btn{
+  display:inline-flex; align-items:center; gap:10px;
+  padding: 0.6rem 1rem; border-radius: 12px;
+  border: none; cursor:pointer; color:white; font-weight:700;
+  background: var(--grad-main); box-shadow: 0 8px 28px rgba(45,55,72,0.08);
+  transition: transform var(--transition), box-shadow var(--transition);
+  position:relative; overflow:hidden;
+}
+.jiffy-btn .btn-icon{ display:inline-flex; align-items:center; justify-content:center; }
+
+/* shimmer */
+.jiffy-btn::before{
+  content:''; position:absolute; inset:0; left:-120%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.14), transparent);
+  transition: left 500ms ease;
+}
+.jiffy-btn:hover{ transform: translateY(-3px); box-shadow: 0 20px 60px rgba(0,0,0,0.14); }
+.jiffy-btn:hover::before{ left:120%; }
+
+/* variants */
+.jiffy-btn.ghost{ background: transparent; color: var(--text); border:1px solid rgba(255,255,255,0.06); }
+.jiffy-btn.secondary{ background: linear-gradient(135deg,var(--accent-blue),var(--accent-purple)); }
+.jiffy-btn.success{ background: linear-gradient(135deg,var(--success), #16a34a); }
+.jiffy-btn.danger{ background: linear-gradient(135deg,var(--danger), #dc2626); }
+.jiffy-btn.block{ width:100%; justify-content:center; }
+
+/* focus */
+.jiffy-btn:focus{ outline:none; box-shadow: var(--focus-ring); }
+
+/* disabled */
+.jiffy-btn[disabled]{ opacity:0.5; cursor:not-allowed; transform:none; }
+
+/* --------------------------
+   FORMS & INPUTS
+   -------------------------- */
+.form-row{ display:flex; gap:var(--space-md); align-items:center; }
+.form-col{ flex:1; }
+
+.jiffy-input{
+  width:100%;
+  padding: 0.7rem 0.9rem;
+  border-radius: 10px;
+  border:1px solid rgba(15,23,42,0.06);
+  background: rgba(255,255,255,0.94);
+  transition: box-shadow var(--transition), border-color var(--transition), background var(--transition);
+  color:var(--text);
+  font-size:0.95rem;
+}
+@media (prefers-color-scheme: dark){
+  .jiffy-input{ background: rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.04); color:var(--text); }
+}
+.jiffy-input:focus{ outline:none; box-shadow: var(--focus-ring); border-color:var(--accent-blue); }
+
+/* labels & helper */
+.jiffy-label{ display:block; margin-bottom:6px; font-weight:700; color:var(--muted); font-size:0.9rem; }
+.input-hint{ font-size:0.85rem; color:var(--muted); margin-top:6px; }
+
+/* textarea */
+.jiffy-textarea{ min-height:120px; resize:vertical; }
+
+/* select */
+.jiffy-select{ appearance:none; background-position: right 12px center; background-repeat:no-repeat; }
+
+/* toggle */
+.toggle{ width:48px; height:28px; background:#e6eef8; border-radius:999px; position:relative; border:1px solid rgba(15,23,42,0.04); cursor:pointer; }
+.toggle .knob{ position:absolute; left:4px; top:50%; transform:translateY(-50%); width:20px; height:20px; border-radius:50%; background:white; transition:left var(--transition); box-shadow:var(--shadow-xs); }
+.toggle.on{ background: linear-gradient(90deg,var(--accent-blue),var(--accent-purple)); }
+.toggle.on .knob{ left:24px; }
+
+/* --------------------------
+   TOASTS / ALERTS
+   -------------------------- */
+.jiffy-toast{
+  position: fixed;
+  right: var(--space-md);
+  bottom: var(--space-md);
+  z-index: 9999;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.toast{
+  min-width:260px;
+  max-width:360px;
+  padding:12px 14px;
+  border-radius:12px;
+  color:white;
+  font-weight:700;
+  box-shadow: var(--shadow-lg);
+  background: linear-gradient(90deg, rgba(0,0,0,0.3), rgba(0,0,0,0.15));
+  backdrop-filter: blur(6px);
+  border:1px solid rgba(255,255,255,0.06);
+  transform-origin: right bottom;
+  animation: toast-in 360ms cubic-bezier(.2,.9,.2,1);
+}
+.toast.success{ background: linear-gradient(135deg,var(--success), #16a34a); }
+.toast.error{ background: linear-gradient(135deg,var(--danger), #dc2626); }
+@keyframes toast-in{ from{ opacity:0; transform: translateX(12px) scale(0.98);} to{ opacity:1; transform:translateX(0) scale(1);} }
+
+/* --------------------------
+   MODAL
+   -------------------------- */
+.jiffy-modal{
+  position:fixed; inset:0; display:flex; align-items:center; justify-content:center;
+  background: rgba(2,6,23,0.45); z-index:2000; opacity:0; pointer-events:none; transition:var(--transition);
+}
+.jiffy-modal.active{ opacity:1; pointer-events:auto; }
+.jiffy-modal .modal-panel{
+  width: min(720px, 94%);
+  border-radius: var(--radius-lg);
+  background: var(--glass-light);
+  padding: var(--space-lg);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(12px); transition:var(--transition);
+}
+.jiffy-modal.active .modal-panel{ transform: translateY(0); }
+
+/* --------------------------
+   TOOLTIP
+   -------------------------- */
+.tooltip{ position:relative; display:inline-block; cursor:help; }
+.tooltip .tip{
+  position:absolute; bottom: calc(100% + 10px); left:50%; transform:translateX(-50%) translateY(6px);
+  background: rgba(15,23,42,0.92); color:white; padding:8px 10px; border-radius:8px; white-space:nowrap;
+  opacity:0; pointer-events:none; transition:var(--transition);
+}
+.tooltip:hover .tip{ opacity:1; transform:translateX(-50%) translateY(0); }
+
+/* --------------------------
+   TABLES
+   -------------------------- */
+.jiffy-table{
+  width:100%; border-collapse:collapse; background:transparent; margin-top: var(--space-md);
+}
+.jiffy-table th, .jiffy-table td{ padding:12px 14px; text-align:left; border-bottom:1px solid rgba(15,23,42,0.04); }
+.jiffy-table thead th{ font-weight:700; color:var(--muted); font-size:0.9rem; }
+.jiffy-table tbody tr:hover{ background: linear-gradient(90deg, rgba(59,130,246,0.03), rgba(139,92,246,0.02)); transform: translateX(2px); }
+
+/* responsive table */
+.table-responsive{ overflow:auto; border-radius:12px; }
+
+/* --------------------------
+   PROGRESS, SKELETON, LOADING
+   -------------------------- */
+.jiffy-progress{
+  height:12px; border-radius:999px; background: linear-gradient(90deg,#f1f5f9,#eef2ff);
+  overflow:hidden; box-shadow: inset 0 -1px 0 rgba(0,0,0,0.04);
+}
+.jiffy-progress .bar{ height:100%; width:0%; background: linear-gradient(90deg,var(--accent-blue),var(--accent-purple)); transition: width 600ms cubic-bezier(.2,.9,.2,1); }
+
+/* skeleton */
+.skeleton{ border-radius:8px; background: linear-gradient(90deg, rgba(0,0,0,0.06) 8%, rgba(0,0,0,0.02) 18%, rgba(0,0,0,0.06) 33%); background-size: 200% 100%; animation: shimmer 1.6s linear infinite; }
+@keyframes shimmer{ 0%{ background-position:-200% 0; } 100%{ background-position:200% 0; } }
+
+/* spinner */
+.spinner{ width:36px; height:36px; border-radius:50%; border:4px solid rgba(59,130,246,0.1); border-left-color:var(--accent-blue); animation: spin 900ms linear infinite; }
+@keyframes spin{ to{ transform: rotate(360deg); } }
+
+/* --------------------------
+   BADGES, CHIPS & AVATARS
+   -------------------------- */
+.jiffy-badge{ display:inline-block; padding:6px 10px; border-radius:999px; font-weight:700; color:white; font-size:0.8rem; }
+.jiffy-badge.info{ background: linear-gradient(135deg,var(--accent-blue),var(--info)); }
+.jiffy-badge.success{ background: linear-gradient(135deg,var(--success), #16a34a); }
+.jiffy-badge.warn{ background: linear-gradient(135deg,var(--warning), #d97706); }
+.jiffy-chip{ display:inline-flex; gap:8px; align-items:center; padding:6px 10px; background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.8)); border-radius:999px; border:1px solid rgba(255,255,255,0.06); }
+
+/* avatar */
+.avatar{ width:40px; height:40px; border-radius:10px; overflow:hidden; display:inline-block; background:linear-gradient(135deg,var(--accent-blue),var(--accent-purple)); color:white; display:flex; align-items:center; justify-content:center; font-weight:800; }
+
+/* --------------------------
+   CHARTS / THREEJS CONTAINER
+   -------------------------- */
+.charts-panel{ border-radius:16px; overflow:hidden; background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.02)); box-shadow: var(--shadow-md); border:1px solid rgba(255,255,255,0.04); padding:8px; }
+#threejs-container{ width:100%; height:360px; border-radius:12px; background: transparent; }
+
+/* --------------------------
+   UTILITIES: SPACING, TEXT, FLEX
+   -------------------------- */
+.u-mt-1{ margin-top:8px; } .u-mt-2{ margin-top:12px; } .u-mt-3{ margin-top:16px; }
+.u-p-1{ padding:8px; } .u-p-2{ padding:12px; } .u-p-3{ padding:16px; }
+
+.flex{ display:flex; } .flex-col{ display:flex; flex-direction:column; }
+.items-center{ align-items:center; } .justify-between{ justify-content:space-between; }
+.gap-2{ gap:8px; } .gap-3{ gap:12px; }
+
+/* text */
+.t-center{ text-align:center; } .t-right{ text-align:right; }
+.text-muted{ color:var(--muted); }
+
+/* width */
+.w-full{ width:100%; } .max-w-sm{ max-width:480px; }
+
+/* visibility */
+.hidden{ display:none; } .visible{ display:block; }
+
+/* border helpers */
+.rounded{ border-radius:var(--radius-md); } .rounded-sm{ border-radius:var(--radius-sm); }
+
+/* --------------------------
+   ANIMATIONS COLLECTION
+   -------------------------- */
+.jiffy-bounce{ animation: jiffy-bounce 620ms cubic-bezier(.68,-0.55,.265,1.55) both; }
+@keyframes jiffy-bounce{ 0%{ transform: scale(.3) rotate(-10deg); opacity:0; } 50%{ transform: scale(1.05) rotate(5deg); } 70%{ transform: scale(.9) rotate(-2deg); } 100%{ transform: scale(1) rotate(0); opacity:1; } }
+
+.jiffy-slide-up{ animation: jiffy-slide-up 720ms cubic-bezier(.25,.46,.45,.94) both; }
+@keyframes jiffy-slide-up{ from{ transform: translateY(24px); opacity:0; } to{ transform: translateY(0); opacity:1; } }
+
+.jiffy-fade-in{ animation: jiffy-fade-in 420ms ease both; }
+@keyframes jiffy-fade-in{ from{ opacity:0; } to{ opacity:1; } }
+
+.jiffy-pulse{ animation: jiffy-pulse 2000ms infinite; }
+@keyframes jiffy-pulse{ 0%{ transform:scale(1); } 50%{ transform:scale(1.04); } 100%{ transform:scale(1); } }
+
+/* stagger utilities */
+.stagger-1{ animation-delay: 0.06s; } .stagger-2{ animation-delay: 0.12s; } .stagger-3{ animation-delay: 0.18s; }
+.stagger-4{ animation-delay: 0.24s; } .stagger-5{ animation-delay: 0.3s; }
+
+/* --------------------------
+   ACCESSIBILITY
+   -------------------------- */
+:focus{ outline:none; }
+a:focus, button:focus, input:focus, textarea:focus{ box-shadow: var(--focus-ring); outline: none; }
+
+/* prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce){
+  .jiffy-bounce, .jiffy-slide-up, .jiffy-fade-in, .jiffy-pulse{ animation-duration: 1ms !important; animation-iteration-count: 1 !important; transition-duration: 1ms !important; }
+}
+
+/* --------------------------
+   RESPONSIVE (MOBILE-FIRST)
+   -------------------------- */
+/* base mobile adjustments */
+@media (max-width: 768px){
+  body{ padding: var(--space-md); }
+  .jiffy-navbar{ padding: 12px; gap: 8px; }
+  .jiffy-navbar .nav-links{ display:none; } /* hide desktop links on small */
+  .jiffy-navbar .hamburger{ display:inline-flex; }
+
+  .jiffy-layout{ grid-template-columns: 1fr; gap: var(--space-md); }
+  .jiffy-card{ padding: var(--space-md); border-radius: var(--radius-md); }
+  .jiffy-btn{ width:100%; justify-content:center; padding: 0.66rem 0.8rem; }
+  .jiffy-sidebar{ display:none; }
+
+  .charts-panel{ padding: 6px; }
+  #threejs-container{ height: 240px; }
+
+  .jiffy-modal .modal-panel{ width: 96%; padding: var(--space-md); }
+  .toast{ min-width: 220px; max-width:90vw; right: 10px; left:auto; }
+}
+
+/* smaller phones */
+@media (max-width: 480px){
+  .h1{ font-size:1.25rem; }
+  .h2{ font-size:1rem; }
+  .jiffy-card{ padding: var(--space-sm); }
+  .jiffy-navbar{ flex-direction:row; align-items:center; justify-content:space-between; gap:6px; }
+  .jiffy-btn{ padding: 0.5rem 0.66rem; font-size:0.95rem; }
+  .jiffy-input{ padding: 0.56rem 0.66rem; font-size:0.95rem; }
+  #threejs-container{ height: 180px; }
+  .jiffy-toast{ left: 8px; right:8px; bottom: 12px; align-items:center; }
+}
+
+/* desktop wide */
+@media (min-width: 1200px){
+  .jiffy-layout{ grid-template-columns: 300px 1fr; }
+  .jiffy-card{ padding: var(--space-lg); }
+}
+
+/* --------------------------
+   PRINT STYLES
+   -------------------------- */
+@media print{
+  body{ background: white; color: black; }
+  .jiffy-navbar, .jiffy-sidebar, .jiffy-toast, .jiffy-modal{ display:none !important; }
+  .jiffy-card{ box-shadow:none; border: 1px solid #ddd; background:white; }
+}
+
+/* --------------------------
+   EXTRAS: FORMS VALIDATION, TOGGLE, KEYBOARD NAV
+   -------------------------- */
+/* form invalid state */
+.input-error{ border-color: var(--danger) !important; box-shadow: 0 0 0 4px rgba(239,68,68,0.08); }
+.field-error{ color: var(--danger); font-size:0.85rem; margin-top:6px; }
+
+/* keyboard accessible focus ring for non-focusable elements */
+.kb-focus:focus{ box-shadow: var(--focus-ring); outline:none; }
+
+/* --------------------------
+   SAMPLE GRID / COMPONENT PRESETS
+   -------------------------- */
+.preset-row{ display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: var(--space-md); }
+@media (max-width: 900px){ .preset-row{ grid-template-columns: 1fr; } }
+
+.preset-card{
+  display:flex; align-items:center; gap:12px; padding:12px; border-radius:12px; background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(248,250,252,0.95)); border:1px solid rgba(59,130,246,0.06);
+}
+@media (prefers-color-scheme: dark){ .preset-card{ background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border:1px solid rgba(255,255,255,0.04); } }
+
+/* --------------------------
+   END OF FILE: small helpers & comments
+   -------------------------- */
+/* Helpful debug classes (remove in production) */
+.debug-outline *{ outline: 1px dashed rgba(255,0,0,0.06); }
+.debug-grid{ background-image: linear-gradient(rgba(0,0,0,0.02) 1px, transparent 1px); background-size: 24px 24px; }
+
+/* End of Jiffy.js Pro Extended CSS */
