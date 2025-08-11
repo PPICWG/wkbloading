@@ -3,367 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hitung Kontainer - WKB 3D</title>
+    <title>Hitung Muat MC Kontainer - Professional 3D</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary: #6366f1;
-            --primary-dark: #4f46e5;
-            --secondary: #a855f7;
-            --secondary-dark: #9333ea;
-            --accent: #ec4899;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --light: #f8fafc;
-            --dark: #1e293b;
-            --gray: #64748b;
-        }
 
-        body {
-            background: linear-gradient(145deg, #0f172a, #1e293b);
-            min-height: 100vh;
-            color: var(--light);
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-        }
+<link rel="stylesheet" href="styles.css">
 
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: 
-                radial-gradient(circle at 20% 30%, rgba(99, 102, 241, 0.15) 0%, transparent 30%),
-                radial-gradient(circle at 80% 70%, rgba(168, 85, 247, 0.15) 0%, transparent 30%);
-            pointer-events: none;
-            z-index: -1;
-        }
 
-        .glass-card {
-            background: rgba(30, 41, 59, 0.6);
-            backdrop-filter: blur(16px) saturate(180%);
-            -webkit-backdrop-filter: blur(16px) saturate(180%);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 16px;
-            box-shadow: 
-                0 4px 30px rgba(0, 0, 0, 0.1),
-                0 10px 20px -5px rgba(0, 0, 0, 0.2),
-                inset 0 1px 0 rgba(255, 255, 255, 0.05);
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .glass-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 
-                0 8px 40px rgba(0, 0, 0, 0.2),
-                0 15px 30px -5px rgba(0, 0, 0, 0.3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.08);
-            border-color: rgba(255, 255, 255, 0.12);
-        }
-
-        .gradient-text {
-            background: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            background-size: 200% 200%;
-            animation: gradientShift 8s ease infinite;
-        }
-
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        .gradient-button {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-            border: none;
-            border-radius: 12px;
-            padding: 14px 28px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            font-size: 0.95rem;
-            box-shadow: 
-                0 4px 15px rgba(99, 102, 241, 0.3),
-                0 2px 4px rgba(0, 0, 0, 0.1),
-                inset 0 1px 0 rgba(255, 255, 255, 0.2);
-            position: relative;
-            overflow: hidden;
-            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-        }
-
-        .gradient-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 
-                0 8px 25px rgba(99, 102, 241, 0.4),
-                0 5px 10px rgba(0, 0, 0, 0.15),
-                inset 0 1px 0 rgba(255, 255, 255, 0.25);
-        }
-
-        .gradient-button:active {
-            transform: translateY(0);
-        }
-
-        .section-header {
-            position: relative;
-            padding-left: 24px;
-        }
-
-        .section-header::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 6px;
-            height: 28px;
-            background: linear-gradient(to bottom, var(--primary), var(--secondary));
-            border-radius: 3px;
-        }
-
-        .input-field {
-            background: rgba(15, 23, 42, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 12px 16px;
-            color: white;
-            font-size: 0.95rem;
-            transition: all 0.3s ease;
-            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
-        }
-
-        .input-field:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 
-                inset 0 1px 3px rgba(0, 0, 0, 0.2),
-                0 0 0 3px rgba(99, 102, 241, 0.2);
-            background: rgba(15, 23, 42, 0.8);
-        }
-
-        .radio-card {
-            transition: all 0.3s ease;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            background: rgba(15, 23, 42, 0.4);
-        }
-
-        .radio-card:hover {
-            border-color: var(--primary);
-            transform: scale(1.02);
-            box-shadow: 0 5px 15px rgba(99, 102, 241, 0.2);
-        }
-
-        .radio-card input:checked + .radio-content {
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(168, 85, 247, 0.1));
-            border-color: var(--primary);
-        }
-
-        .visualization-container {
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 
-                0 25px 50px -12px rgba(0, 0, 0, 0.25),
-                inset 0 1px 0 rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            background: linear-gradient(145deg, #0f172a, #1e293b);
-            position: relative;
-        }
-
-        .control-panel {
-            background: rgba(30, 41, 59, 0.7);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.2);
-        }
-
-        .control-slider {
-            -webkit-appearance: none;
-            appearance: none;
-            height: 6px;
-            border-radius: 3px;
-            background: linear-gradient(90deg, #e2e8f0, #cbd5e1);
-            outline: none;
-        }
-
-        .control-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            cursor: pointer;
-            box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
-        }
-
-        .visualization-mode-toggle {
-            background: linear-gradient(135deg, var(--success), #059669);
-            transition: all 0.3s ease;
-            border-radius: 12px;
-            padding: 12px 20px;
-            color: white;
-            font-weight: 600;
-        }
-
-        .visualization-mode-toggle:hover {
-            background: linear-gradient(135deg, #059669, #047857);
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.4);
-        }
-
-        /* Animations */
-        @keyframes jiffyBounce {
-            0% { transform: scale(0.3) rotate(-10deg); opacity: 0; }
-            50% { transform: scale(1.05) rotate(5deg); }
-            70% { transform: scale(0.9) rotate(-2deg); }
-            100% { transform: scale(1) rotate(0deg); opacity: 1; }
-        }
-
-        @keyframes jiffySlideUp {
-            0% { transform: translateY(50px); opacity: 0; }
-            100% { transform: translateY(0); opacity: 1; }
-        }
-
-        @keyframes jiffyFadeIn {
-            0% { opacity: 0; transform: scale(0.95); }
-            100% { opacity: 1; transform: scale(1); }
-        }
-
-        @keyframes jiffyPulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-
-        .jiffy-bounce {
-            animation: jiffyBounce 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-        }
-
-        .jiffy-slide-up {
-            animation: jiffySlideUp 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        }
-
-        .jiffy-fade-in {
-            animation: jiffyFadeIn 1s ease-out;
-        }
-
-        .jiffy-pulse {
-            animation: jiffyPulse 2s infinite;
-        }
-
-        .jiffy-hover-lift {
-            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        }
-
-        .jiffy-hover-lift:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.2);
-        }
-
-        .jiffy-button-press {
-            transition: all 0.1s ease;
-        }
-
-        .jiffy-button-press:active {
-            transform: scale(0.95);
-        }
-
-        .jiffy-zoom-in {
-            animation: jiffyZoomIn 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        }
-
-        @keyframes jiffyZoomIn {
-            0% { transform: scale(0); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-
-        .jiffy-elastic {
-            animation: jiffyElastic 1s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-        }
-
-        @keyframes jiffyElastic {
-            0% { transform: scale(0); }
-            50% { transform: scale(1.2); }
-            100% { transform: scale(1); }
-        }
-
-        .jiffy-stagger-1 { animation-delay: 0.1s; }
-        .jiffy-stagger-2 { animation-delay: 0.2s; }
-        .jiffy-stagger-3 { animation-delay: 0.3s; }
-        .jiffy-stagger-4 { animation-delay: 0.4s; }
-        .jiffy-stagger-5 { animation-delay: 0.5s; }
-    </style>
 </head>
 <body>
-    <div class="main-container container mx-auto px-4 py-8 max-w-7xl">
-        <!-- Premium Header -->
+    <div class="main-container container mx-auto px-4 py-8">
+        <!-- Enhanced Header -->
         <div class="text-center mb-12 jiffy-bounce">
             <div class="header-decoration inline-block">
-                <h1 class="text-4xl md:text-5xl font-bold gradient-text mb-4">Hitung Kapasitas 3D</h1>
-                <div class="h-1 w-24 mx-auto bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full mt-4"></div>
+                <h1 class="text-5xl font-bold gradient-text mb-4">📦 Hitung Kontainer 3D</h1>
             </div>
-            <p class="text-xl text-white/80 font-medium jiffy-slide-up">PPIC WKB</p>
-            <div class="mt-8 flex flex-wrap justify-center gap-3 max-w-2xl mx-auto">
-                <div class="glass-card px-5 py-2.5 rounded-full jiffy-fade-in jiffy-stagger-1 hover:bg-blue-500/20 transition-all">
-                    <span class="text-sm font-medium text-white/90 flex items-center gap-2"><span class="text-lg">🎮</span> 3D Interactive</span>
+            <p class="text-xl text-white/80 font-medium jiffy-slide-up"> </p>
+            <div class="mt-6 flex justify-center space-x-4">
+                <div class="glass-card px-4 py-2 rounded-full jiffy-fade-in jiffy-stagger-1">
+                    <span class="text-sm font-medium text-gray-700">WKB-ppic</span>
                 </div>
-                <div class="glass-card px-5 py-2.5 rounded-full jiffy-fade-in jiffy-stagger-2 hover:bg-purple-500/20 transition-all">
-                    <span class="text-sm font-medium text-white/90 flex items-center gap-2"><span class="text-lg">📋</span> Multi-Layer Analysis</span>
+                <div class="glass-card px-4 py-2 rounded-full jiffy-fade-in jiffy-stagger-2">
+                    <span class="text-sm font-medium text-gray-700">PLAN-load</span>
                 </div>
-                <div class="glass-card px-5 py-2.5 rounded-full jiffy-fade-in jiffy-stagger-3 hover:bg-pink-500/20 transition-all">
-                    <span class="text-sm font-medium text-white/90 flex items-center gap-2"><span class="text-lg">🤖</span> AI-Powered Optimization</span>
+                <div class="glass-card px-4 py-2 rounded-full jiffy-fade-in jiffy-stagger-3">
+                    <span class="text-sm font-medium text-gray-700">AI-Powered</span>
                 </div>
             </div>
         </div>
 
-        <div class="grid lg:grid-cols-2 gap-8">
+        <div class="grid lg:grid-cols-2 gap-6 lg:gap-8">
             <!-- Input Panel -->
-            <div class="glass-card rounded-2xl shadow-2xl p-8 jiffy-fade-in jiffy-stagger-1">
-                <h2 class="section-header text-2xl lg:text-3xl font-bold text-white mb-8">⚙️ Dimensi</h2>
+            <div class="glass-card rounded-2xl shadow-2xl p-6 lg:p-8 jiffy-fade-in jiffy-stagger-1">
+                <h2 class="section-header text-2xl lg:text-3xl font-bold text-gray-800 mb-6 lg:mb-8">⚙️ Pengaturan</h2>
 
                 <!-- Container Size -->
-                <div class="mb-8">
-                    <h3 class="text-lg lg:text-xl font-semibold text-white/90 mb-4 flex items-center">
-                        <span class="w-8 h-8 lg:w-9 lg:h-9 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white text-sm mr-3 jiffy-pulse">📏</span>
-                        Dimensi Kontainer (cm)
+                <div class="mb-6 lg:mb-8">
+                    <h3 class="text-lg lg:text-xl font-semibold text-gray-700 mb-4 flex items-center">
+                        <span class="w-7 h-7 lg:w-8 lg:h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white text-sm mr-3 jiffy-pulse">📏</span>
+                        Ukuran Kontainer (cm)
                     </h3>
-                    <div class="glass-card p-5 rounded-xl mb-4 jiffy-hover-lift cursor-pointer transition-all" onclick="toggleContainerPanel()">
+                    <div class="glass-card p-4 rounded-xl mb-4 jiffy-hover-lift cursor-pointer" onclick="toggleContainerPanel()">
                         <div class="text-center">
-                            <div id="containerVolume" class="text-3xl lg:text-4xl font-bold gradient-text">66.54 m³</div>
-                            <div class="text-sm text-white/70 font-medium mt-1">Volume Total Kontainer</div>
-                            <div class="text-xs text-white/50 mt-2 flex items-center justify-center gap-1">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                                </svg>
-                                Klik untuk edit dimensi
-                            </div>
+                            <div id="containerVolume" class="text-2xl lg:text-3xl font-bold gradient-text">66.54 m³</div>
+                            <div class="text-sm text-gray-600 font-medium">Volume Kontainer </div>
+                            <div class="text-xs text-gray-500 mt-1">▼ Klik untuk expand</div>
                         </div>
                     </div>
                     <div id="containerInputs" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div class="space-y-2">
-                            <label class="block text-sm font-semibold text-white/80">Panjang</label>
+                            <label class="block text-sm font-semibold text-gray-700">Panjang</label>
                             <input type="number" id="containerLength" value="1158" oninput="updateContainerVolume()"
                                    class="input-field w-full px-4 py-3 rounded-xl font-medium text-center text-base jiffy-hover-lift">
                         </div>
                         <div class="space-y-2">
-                            <label class="block text-sm font-semibold text-white/80">Lebar</label>
+                            <label class="block text-sm font-semibold text-gray-700">Lebar</label>
                             <input type="number" id="containerWidth" value="228" oninput="updateContainerVolume()"
                                    class="input-field w-full px-4 py-3 rounded-xl font-medium text-center text-base jiffy-hover-lift">
                         </div>
                         <div class="space-y-2">
-                            <label class="block text-sm font-semibold text-white/80">Tinggi</label>
+                            <label class="block text-sm font-semibold text-gray-700">Tinggi</label>
                             <input type="number" id="containerHeight" value="252" oninput="updateContainerVolume()"
                                    class="input-field w-full px-4 py-3 rounded-xl font-medium text-center text-base jiffy-hover-lift">
                         </div>
@@ -371,24 +73,24 @@
                 </div>
 
                 <!-- Box Size -->
-                <div class="mb-8">
-                    <h3 class="text-lg lg:text-xl font-semibold text-white/90 mb-4 flex items-center">
-                        <span class="w-8 h-8 lg:w-9 lg:h-9 bg-gradient-to-r from-green-500 to-blue-500 rounded-full flex items-center justify-center text-white text-sm mr-3 jiffy-pulse">📦</span>
-                        Dimensi MC (cm)
+                <div class="mb-6 lg:mb-8">
+                    <h3 class="text-lg lg:text-xl font-semibold text-gray-700 mb-4 flex items-center">
+                        <span class="w-7 h-7 lg:w-8 lg:h-8 bg-gradient-to-r from-green-500 to-blue-500 rounded-full flex items-center justify-center text-white text-sm mr-3 jiffy-pulse">📦</span>
+                        Ukuran MC (cm)
                     </h3>
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div class="space-y-2">
-                            <label class="block text-sm font-semibold text-white/80">Panjang</label>
+                            <label class="block text-sm font-semibold text-gray-700">Panjang</label>
                             <input type="number" id="boxLength" value="60" 
                                    class="input-field w-full px-4 py-3 rounded-xl font-medium text-center text-base jiffy-hover-lift">
                         </div>
                         <div class="space-y-2">
-                            <label class="block text-sm font-semibold text-white/80">Lebar</label>
+                            <label class="block text-sm font-semibold text-gray-700">Lebar</label>
                             <input type="number" id="boxWidth" value="40" 
                                    class="input-field w-full px-4 py-3 rounded-xl font-medium text-center text-base jiffy-hover-lift">
                         </div>
                         <div class="space-y-2">
-                            <label class="block text-sm font-semibold text-white/80">Tinggi</label>
+                            <label class="block text-sm font-semibold text-gray-700">Tinggi</label>
                             <input type="number" id="boxHeight" value="30" 
                                    class="input-field w-full px-4 py-3 rounded-xl font-medium text-center text-base jiffy-hover-lift">
                         </div>
@@ -396,68 +98,68 @@
                 </div>
 
                 <!-- Layout Pattern -->
-                <div class="mb-8">
-                    <h3 class="text-lg lg:text-xl font-semibold text-white/90 mb-4 flex items-center">
-                        <span class="w-8 h-8 lg:w-9 lg:h-9 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white text-sm mr-3 jiffy-pulse">🎯</span>
+                <div class="mb-6 lg:mb-8">
+                    <h3 class="text-lg lg:text-xl font-semibold text-gray-700 mb-4 flex items-center">
+                        <span class="w-7 h-7 lg:w-8 lg:h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white text-sm mr-3 jiffy-pulse">🎯</span>
                         Pola Penataan
                     </h3>
                     <div class="grid grid-cols-2 gap-3">
-                        <label class="radio-card border-2 border-white/10 rounded-xl p-4 jiffy-hover-lift">
+                        <label class="radio-card border-2 rounded-xl p-3 lg:p-4 jiffy-hover-lift">
                             <input type="radio" name="layoutPattern" value="normal" checked class="sr-only">
                             <div class="radio-content text-center">
-                                <div class="text-3xl mb-2">□</div>
-                                <div class="font-semibold text-white text-base">Standar</div>
-                                <div class="text-xs text-white/60 mt-1">Penataan dasar</div>
+                                <div class="text-2xl mb-2">□</div>
+                                <div class="font-semibold text-gray-700 text-sm lg:text-base">Normal</div>
+                                <div class="text-xs text-gray-500">Penataan standar</div>
                             </div>
                         </label>
-                        <label class="radio-card border-2 border-white/10 rounded-xl p-4 jiffy-hover-lift">
+                        <label class="radio-card border-2 rounded-xl p-3 lg:p-4 jiffy-hover-lift">
                             <input type="radio" name="layoutPattern" value="zigzag" class="sr-only">
                             <div class="radio-content text-center">
-                                <div class="text-3xl mb-2">⟲</div>
-                                <div class="font-semibold text-white text-base">Zig-Zag</div>
-                                <div class="text-xs text-white/60 mt-1">Pola bergantian</div>
+                                <div class="text-2xl mb-2">⟲</div>
+                                <div class="font-semibold text-gray-700 text-sm lg:text-base">Zig-Zag</div>
+                                <div class="text-xs text-gray-500">Pola bergantian</div>
                             </div>
                         </label>
-                        <label class="radio-card border-2 border-white/10 rounded-xl p-4 jiffy-hover-lift">
+                        <label class="radio-card border-2 rounded-xl p-3 lg:p-4 jiffy-hover-lift">
                             <input type="radio" name="layoutPattern" value="offset" class="sr-only">
                             <div class="radio-content text-center">
-                                <div class="text-3xl mb-2">⬢</div>
-                                <div class="font-semibold text-white text-base">Offset</div>
-                                <div class="text-xs text-white/60 mt-1">Pola bergeser</div>
+                                <div class="text-2xl mb-2">⬢</div>
+                                <div class="font-semibold text-gray-700 text-sm lg:text-base">Offset</div>
+                                <div class="text-xs text-gray-500">Pola bergeser</div>
                             </div>
                         </label>
-                        <label class="radio-card border-2 border-white/10 rounded-xl p-4 jiffy-hover-lift">
+                        <label class="radio-card border-2 rounded-xl p-3 lg:p-4 jiffy-hover-lift">
                             <input type="radio" name="layoutPattern" value="optimal" class="sr-only">
                             <div class="radio-content text-center">
-                                <div class="text-3xl mb-2">🤖</div>
-                                <div class="font-semibold text-white text-base">Optimal</div>
-                                <div class="text-xs text-white/60 mt-1">AI terbaik</div>
+                                <div class="text-2xl mb-2">🎯</div>
+                                <div class="font-semibold text-gray-700 text-sm lg:text-base">Optimal</div>
+                                <div class="text-xs text-gray-500">AI terbaik</div>
                             </div>
                         </label>
                     </div>
                 </div>
 
                 <!-- Additional Options -->
-                <div class="mb-8">
-                    <h3 class="text-lg lg:text-xl font-semibold text-white/90 mb-4 flex items-center">
-                        <span class="w-8 h-8 lg:w-9 lg:h-9 bg-gradient-to-r from-orange-500 to-red-500 rounded-full flex items-center justify-center text-white text-sm mr-3 jiffy-pulse">🔧</span>
+                <div class="mb-6 lg:mb-8">
+                    <h3 class="text-lg lg:text-xl font-semibold text-gray-700 mb-4 flex items-center">
+                        <span class="w-7 h-7 lg:w-8 lg:h-8 bg-gradient-to-r from-orange-500 to-red-500 rounded-full flex items-center justify-center text-white text-sm mr-3 jiffy-pulse">🔧</span>
                         Opsi Tambahan
                     </h3>
                     <div class="space-y-4">
-                        <label class="flex items-center p-4 glass-card rounded-xl cursor-pointer jiffy-hover-lift transition-all hover:border-blue-500/30">
+                        <label class="flex items-center p-4 glass-card rounded-xl cursor-pointer jiffy-hover-lift transition-all">
                             <input type="checkbox" id="allowRotation" checked 
-                                   class="w-5 h-5 text-blue-600 rounded focus:ring-blue-500 bg-white/10 border-white/20">
+                                   class="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
                             <div class="ml-4">
-                                <div class="font-semibold text-white text-base">Rotasi Kotak (90°)</div>
-                                <div class="text-sm text-white/60">Meningkatkan efisiensi penataan</div>
+                                <div class="font-semibold text-gray-700 text-base">Izinkan rotasi MC (90°)</div>
+                                <div class="text-sm text-gray-500">Meningkatkan efisiensi penataan</div>
                             </div>
                         </label>
-                        <label class="flex items-center p-4 glass-card rounded-xl cursor-pointer jiffy-hover-lift transition-all hover:border-purple-500/30">
+                        <label class="flex items-center p-4 glass-card rounded-xl cursor-pointer jiffy-hover-lift transition-all">
                             <input type="checkbox" id="enable3D" 
-                                   class="w-5 h-5 text-purple-600 rounded focus:ring-purple-500 bg-white/10 border-white/20">
+                                   class="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
                             <div class="ml-4">
-                                <div class="font-semibold text-white text-base">Visualisasi 3D</div>
-                                <div class="text-sm text-white/60">Tampilan interaktif dengan kontrol kamera</div>
+                                <div class="font-semibold text-gray-700 text-base">Mode Visualisasi 3D</div>
+                                <div class="text-sm text-gray-500">Tampilan interaktif dengan kontrol kamera</div>
                             </div>
                         </label>
                     </div>
@@ -466,61 +168,53 @@
                 <!-- Action Buttons -->
                 <div class="space-y-4">
                     <button onclick="calculateOptimalLayout()" 
-                            class="gradient-button w-full text-white font-bold py-4 px-8 rounded-xl text-lg jiffy-button-press jiffy-hover-lift flex items-center justify-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                        </svg>
-                        Hitung Layout Optimal
+                            class="gradient-button w-full text-white font-bold py-4 px-8 rounded-xl shadow-lg text-lg jiffy-button-press jiffy-hover-lift">
+                        🧮 Hitung Layout Optimal
                     </button>
                 </div>
             </div>
 
             <!-- Results Panel -->
-            <div class="glass-card rounded-2xl shadow-2xl p-8 jiffy-fade-in jiffy-stagger-2">
-                <h2 class="section-header text-2xl lg:text-3xl font-bold text-white mb-8">📊 Hasil Analisis</h2>
+            <div class="glass-card rounded-2xl shadow-2xl p-6 lg:p-8 jiffy-fade-in jiffy-stagger-2">
+                <h2 class="section-header text-2xl lg:text-3xl font-bold text-gray-800 mb-6 lg:mb-8">📊 Hasil Perhitungan</h2>
 
                 <div id="resultsContainer" class="space-y-6">
-                    <div class="text-center text-white/50 py-12">
+                    <div class="text-center text-gray-500 py-12">
                         <div class="text-8xl mb-6 jiffy-pulse">📦</div>
-                        <p class="text-xl font-medium jiffy-fade-in">Masukkan parameter untuk memulai analisis</p>
-                        <div class="mt-4 text-sm text-white/40 jiffy-fade-in jiffy-stagger-1">Sistem akan menampilkan konfigurasi optimal berdasarkan input Anda</div>
+                        <p class="text-lg font-medium jiffy-fade-in">Masukkan ukuran dan klik "Hitung Layout Optimal" untuk melihat hasil</p>
+                        <div class="mt-4 text-sm text-gray-400 jiffy-fade-in jiffy-stagger-1">Sistem AI siap menganalisis konfigurasi optimal Anda</div>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Enhanced Visualization Panel -->
-        <div class="mt-12 glass-card rounded-2xl shadow-2xl p-8 jiffy-fade-in jiffy-stagger-3">
-            <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 gap-4">
-                <h2 class="section-header text-2xl lg:text-3xl font-bold text-white">🎯 Visualisasi 3D</h2>
+        <div class="mt-8 lg:mt-12 glass-card rounded-2xl shadow-2xl p-6 lg:p-8 jiffy-fade-in jiffy-stagger-3">
+            <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-6 lg:mb-8 gap-4">
+                <h2 class="section-header text-2xl lg:text-3xl font-bold text-gray-800">🎯 Visualisasi Layout</h2>
                 <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
                     <button id="toggle3DMode" onclick="toggle3DVisualization()" 
-                            class="visualization-mode-toggle text-white px-6 py-3 rounded-xl font-semibold text-base jiffy-button-press jiffy-hover-lift flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
-                        </svg>
-                        Mode 3D Interaktif
+                            class="visualization-mode-toggle text-white px-6 py-3 rounded-xl font-semibold text-base jiffy-button-press jiffy-hover-lift">
+                        🎮 Mode 3D
                     </button>
+                    
                 </div>
             </div>
 
             <!-- Layer Controls -->
-            <div id="layerControls" class="hidden mb-6 control-panel p-6 rounded-xl jiffy-elastic">
+            <div id="layerControls" class="hidden mb-6 control-panel p-4 lg:p-6 rounded-xl jiffy-elastic">
                 <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between mb-4 gap-3">
-                    <h4 class="text-lg font-bold text-white flex items-center gap-2">
-                        <span class="w-7 h-7 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white text-sm">🏗️</span>
-                        Kontrol Sap
-                    </h4>
+                    <h4 class="text-lg font-bold text-gray-700">🏗️ Kontrol Sap</h4>
                     <div class="flex items-center gap-4">
                         <label class="flex items-center gap-2">
                             <input type="checkbox" id="showAllLayers" onchange="toggleLayerMode()" 
-                                   class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500 bg-white/10 border-white/20">
-                            <span class="text-sm font-medium text-white/80">Tampilkan Semua Sap</span>
+                                   class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
+                            <span class="text-sm font-medium text-gray-700">Tampilkan Semua Sap</span>
                         </label>
                     </div>
                 </div>
-                <div class="text-sm text-white/70 bg-blue-500/10 p-3 rounded-lg mb-4">
-                    💡 <strong>Informasi:</strong> SAP dari depan ke belakang (berdasarkan lebar x tinggi kontainer)
+                <div class="text-sm text-gray-500 bg-blue-50 p-3 rounded-lg mb-4">
+                    💡 <strong>Sap:</strong> Lapisan dari depan ke belakang
                 </div>
                 
                 <!-- Layer Tabs -->
@@ -528,50 +222,51 @@
                 
                 <!-- Layer Slider -->
                 <div class="flex items-center gap-4 lg:gap-6">
-                    <label class="text-sm font-semibold text-white/80 min-w-16">Sap:</label>
+                    <label class="text-sm font-semibold text-gray-700 min-w-16">Sap:</label>
                     <input type="range" id="layerSlider" min="1" max="1" value="1" 
                            class="control-slider flex-1" onchange="showSpecificLayer(this.value)">
-                    <span id="layerDisplay" class="text-sm font-bold text-white min-w-16 text-center">1 / 1</span>
+                    <span id="layerDisplay" class="text-sm font-bold text-gray-700 min-w-16 text-center">1 / 1</span>
                 </div>
             </div>
 
             <!-- 3D Controls Panel -->
-            <div id="threeDControls" class="hidden mb-6 control-panel p-6 rounded-xl jiffy-zoom-in">
+            <div id="threeDControls" class="hidden mb-6 control-panel p-4 lg:p-6 rounded-xl jiffy-zoom-in">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <div class="space-y-4">
-                        <h4 class="text-lg font-bold text-white flex items-center gap-2">
-                            <span class="w-7 h-7 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white text-sm">🎮</span>
+                        <h4 class="text-lg font-bold text-gray-700 flex items-center">
+                            <span class="w-6 h-6 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white text-xs mr-2">🎮</span>
                             Kontrol Kamera
                         </h4>
                         <div class="space-y-3">
                             <button onclick="resetCamera()" 
-                                    class="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 px-4 rounded-lg transition-all jiffy-button-press text-base flex items-center justify-center gap-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                                </svg>
-                                Reset View
+                                    class="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 px-4 rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all jiffy-button-press text-base">
+                                🔄 Reset View
+                            </button>
+                            <button id="doorToggleBtn" onclick="toggleContainerDoors()" 
+                                    class="w-full bg-gradient-to-r from-green-500 to-green-600 text-white py-3 px-4 rounded-lg hover:from-green-600 hover:to-green-700 transition-all jiffy-button-press text-base">
+                                🚪 Buka Pintu
                             </button>
                             <div class="flex items-center gap-3">
-                                <label class="text-sm font-medium text-white/80 min-w-20">Wireframe:</label>
+                                <label class="text-sm font-medium text-gray-700 min-w-20">Wireframe:</label>
                                 <input type="checkbox" id="wireframeMode" onchange="toggleWireframe()" 
-                                       class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500 bg-white/10 border-white/20">
+                                       class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
                             </div>
                         </div>
                     </div>
                     
                     <div class="space-y-4">
-                        <h4 class="text-lg font-bold text-white flex items-center gap-2">
-                            <span class="w-7 h-7 bg-gradient-to-r from-green-500 to-teal-500 rounded-full flex items-center justify-center text-white text-sm">🎨</span>
-                            Pengaturan Visual
+                        <h4 class="text-lg font-bold text-gray-700 flex items-center">
+                            <span class="w-6 h-6 bg-gradient-to-r from-green-500 to-teal-500 rounded-full flex items-center justify-center text-white text-xs mr-2">🎨</span>
+                            Visual Settings
                         </h4>
                         <div class="space-y-3">
                             <div class="flex items-center gap-3">
-                                <label class="text-sm font-medium text-white/80 min-w-20">Opacity:</label>
+                                <label class="text-sm font-medium text-gray-700 min-w-20">Opacity:</label>
                                 <input type="range" id="opacitySlider" min="0.1" max="1" step="0.1" value="0.8" 
                                        class="control-slider flex-1" onchange="updateOpacity(this.value)">
-                                <span id="opacityValue" class="text-sm font-bold text-white min-w-8">0.8</span>
+                                <span id="opacityValue" class="text-sm font-bold text-gray-700 min-w-8">0.8</span>
                             </div>
-                            <div class="text-sm text-white/60 bg-white/5 p-3 rounded-lg">
+                            <div class="text-sm text-gray-500 bg-gray-100 p-3 rounded-lg">
                                 💡 <strong>Tips:</strong> Drag untuk memutar, scroll untuk zoom, klik kanan untuk pan
                             </div>
                         </div>
@@ -580,19 +275,20 @@
             </div>
 
             <!-- Visualization Container -->
-            <div id="visualizationContainer" class="border-4 border-white/10 rounded-2xl p-8 min-h-96 flex items-center justify-center bg-gradient-to-br from-white/5 to-white/10 jiffy-hover-lift">
-                <div class="text-center text-white/50">
-                    <div class="text-7xl lg:text-8xl mb-6 jiffy-pulse">🎨</div>
-                    <p class="text-xl lg:text-2xl font-medium jiffy-fade-in">Visualisasi akan muncul setelah perhitungan</p>
-                    <div class="mt-4 text-sm text-white/40 jiffy-fade-in jiffy-stagger-1">Sistem akan menampilkan layout 2D/3D interaktif</div>
+            <div id="visualizationContainer" class="border-4 border-gray-200 rounded-2xl p-6 lg:p-8 min-h-80 lg:min-h-96 flex items-center justify-center bg-gradient-to-br from-gray-50 to-white jiffy-hover-lift">
+                <div class="text-center text-gray-500">
+                    <div class="text-6xl lg:text-8xl mb-6 jiffy-pulse">🎨</div>
+                    <p class="text-lg lg:text-xl font-medium jiffy-fade-in">Visualisasi akan muncul setelah perhitungan</p>
+                    <div class="mt-4 text-sm text-gray-400 jiffy-fade-in jiffy-stagger-1">Sistem akan menampilkan layout 2D/3D interaktif</div>
                 </div>
             </div>
 
             <!-- 3D Container -->
-            <div id="threejs-container" class="hidden rounded-2xl overflow-hidden h-[500px]"></div>
+            <div id="threejs-container" class="hidden rounded-2xl overflow-hidden"></div>
         </div>
     </div>
-
-    <script src="main.js"></script>
-</body>
+    
+    <script src ="main.js"></script>
+    
+    <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96d0f256733bea83',t:'MTc1NDg0NDE0OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
