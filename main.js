@@ -1,5 +1,4 @@
-
-        let calculationResults = null;
+      let calculationResults = null;
         let currentVisualizationMode = '2d';
         let scene, camera, renderer, controls;
         let boxMeshes = [];
@@ -161,7 +160,7 @@
 
             // Basic validation
             if (!boxL || !boxW || !boxH || boxL <= 0 || boxW <= 0 || boxH <= 0) {
-                showJiffyAlert('Mohon isi semua ukuran kotak dengan benar!', 'error');
+                showJiffyAlert('Mohon isi semua ukuran MC dengan benar!', 'error');
                 return;
             }
 
@@ -237,7 +236,7 @@
 
                 displayResults();
                 createVisualization();
-                showJiffyAlert('Perhitungan selesai!', 'success');
+                showJiffyAlert('Perhitungan selesai! ', 'success');
             }, 2000);
         }
 
@@ -490,11 +489,11 @@
                         </div>
                         <div class="text-center jiffy-bounce jiffy-stagger-3">
                             <div class="text-2xl font-bold text-gray-700">${optimal.boxesPerLayer}</div>
-                            <div class="text-sm font-semibold text-gray-600">Kotak per Sap</div>
+                            <div class="text-sm font-semibold text-gray-600">MC per Sap</div>
                         </div>
                         <div class="text-center jiffy-bounce jiffy-stagger-4">
                             <div class="text-2xl font-bold text-gray-700">${optimal.layers}</div>
-                            <div class="text-sm font-semibold text-gray-600">Tinggi Sap</div>
+                            <div class="text-sm font-semibold text-gray-600">Jumlah Sap</div>
                         </div>
                     </div>
                 </div>
@@ -518,7 +517,7 @@
                             <div class="text-2xl font-bold text-red-600">${(metrics.wastedSpace / 1000000).toFixed(2)} m³</div>
                         </div>
                         <div class="metric-card p-4 rounded-xl jiffy-hover-lift jiffy-fade-in jiffy-stagger-4">
-                            <div class="text-gray-600 font-semibold mb-1">Kotak per m³</div>
+                            <div class="text-gray-600 font-semibold mb-1">MC per m³</div>
                             <div class="text-2xl font-bold text-purple-600">${(optimal.totalBoxes / (metrics.containerVolume / 1000000)).toFixed(0)}</div>
                         </div>
                     </div>
@@ -665,38 +664,323 @@
 
         function createContainer3D() {
             const { containerDimensions } = calculationResults;
-            const geometry = new THREE.BoxGeometry(
-                containerDimensions.length / 10,
-                containerDimensions.height / 10,
-                containerDimensions.width / 10
-            );
             
-            // Create container wireframe with enhanced styling
-            const edges = new THREE.EdgesGeometry(geometry);
-            const material = new THREE.LineBasicMaterial({ 
-                color: 0x1e40af, 
-                linewidth: 4,
+            // Create container group
+            containerMesh = new THREE.Group();
+            
+            // Container dimensions in Three.js units (scaled down by 10)
+            const length = containerDimensions.length / 10;
+            const width = containerDimensions.width / 10;
+            const height = containerDimensions.height / 10;
+            
+            // Create realistic 40ft FCL container structure
+            
+            // 1. FLOOR - Realistic container floor with wooden planks texture
+            const floorGeometry = new THREE.BoxGeometry(length, 0.5, width);
+            
+            // Create wooden floor texture using canvas
+            const floorCanvas = document.createElement('canvas');
+            floorCanvas.width = 512;
+            floorCanvas.height = 512;
+            const floorCtx = floorCanvas.getContext('2d');
+            
+            // Base wood color
+            floorCtx.fillStyle = '#8B4513';
+            floorCtx.fillRect(0, 0, 512, 512);
+            
+            // Wood grain pattern
+            for (let i = 0; i < 512; i += 32) {
+                floorCtx.fillStyle = i % 64 === 0 ? '#654321' : '#A0522D';
+                floorCtx.fillRect(i, 0, 32, 512);
+                
+                // Add wood grain lines
+                floorCtx.strokeStyle = '#5D4037';
+                floorCtx.lineWidth = 1;
+                for (let j = 0; j < 512; j += 8) {
+                    floorCtx.beginPath();
+                    floorCtx.moveTo(i, j);
+                    floorCtx.lineTo(i + 32, j + Math.random() * 4);
+                    floorCtx.stroke();
+                }
+            }
+            
+            const floorTexture = new THREE.CanvasTexture(floorCanvas);
+            floorTexture.wrapS = THREE.RepeatWrapping;
+            floorTexture.wrapT = THREE.RepeatWrapping;
+            floorTexture.repeat.set(length / 10, width / 10);
+            
+            const floorMaterial = new THREE.MeshPhongMaterial({
+                map: floorTexture,
+                color: 0x8B4513,
+                shininess: 10
+            });
+            
+            const floor = new THREE.Mesh(floorGeometry, floorMaterial);
+            floor.position.set(length/2, 0.25, width/2);
+            floor.receiveShadow = true;
+            containerMesh.add(floor);
+            
+            // 2. WALLS - Realistic corrugated steel container walls
+            const wallThickness = 0.3;
+            
+            // Create corrugated metal texture
+            const wallCanvas = document.createElement('canvas');
+            wallCanvas.width = 512;
+            wallCanvas.height = 512;
+            const wallCtx = wallCanvas.getContext('2d');
+            
+            // Base metal color
+            wallCtx.fillStyle = '#4A5568';
+            wallCtx.fillRect(0, 0, 512, 512);
+            
+            // Corrugated pattern
+            for (let i = 0; i < 512; i += 16) {
+                const shade = i % 32 === 0 ? '#2D3748' : '#718096';
+                wallCtx.fillStyle = shade;
+                wallCtx.fillRect(i, 0, 8, 512);
+                
+                // Add vertical ridges
+                wallCtx.strokeStyle = '#1A202C';
+                wallCtx.lineWidth = 1;
+                wallCtx.beginPath();
+                wallCtx.moveTo(i, 0);
+                wallCtx.lineTo(i, 512);
+                wallCtx.stroke();
+            }
+            
+            // Add rust spots and wear
+            for (let i = 0; i < 20; i++) {
+                wallCtx.fillStyle = `rgba(139, 69, 19, ${0.3 + Math.random() * 0.4})`;
+                wallCtx.beginPath();
+                wallCtx.arc(Math.random() * 512, Math.random() * 512, Math.random() * 15 + 5, 0, Math.PI * 2);
+                wallCtx.fill();
+            }
+            
+            const wallTexture = new THREE.CanvasTexture(wallCanvas);
+            wallTexture.wrapS = THREE.RepeatWrapping;
+            wallTexture.wrapT = THREE.RepeatWrapping;
+            
+            const wallMaterial = new THREE.MeshPhongMaterial({
+                map: wallTexture,
+                color: 0x4A5568,
+                shininess: 30,
+                transparent: true,
+                opacity: 0.9
+            });
+            
+            // Left wall
+            const leftWallGeometry = new THREE.BoxGeometry(wallThickness, height, width);
+            const leftWall = new THREE.Mesh(leftWallGeometry, wallMaterial);
+            leftWall.position.set(wallThickness/2, height/2, width/2);
+            containerMesh.add(leftWall);
+            
+            // Right wall
+            const rightWall = new THREE.Mesh(leftWallGeometry, wallMaterial);
+            rightWall.position.set(length - wallThickness/2, height/2, width/2);
+            containerMesh.add(rightWall);
+            
+            // Front wall (solid for reefer container)
+            const frontWallGeometry = new THREE.BoxGeometry(length, height, wallThickness);
+            const frontWall = new THREE.Mesh(frontWallGeometry, wallMaterial);
+            frontWall.position.set(length/2, height/2, wallThickness/2);
+            containerMesh.add(frontWall);
+            
+            // REEFER CONTAINER - Doors at the back
+            const doorWidth = width * 0.45; // Door width based on container width
+            const doorHeight = height - 2;
+            
+            // Left door (at back) - positioned for sideways opening
+            const leftDoorGeometry = new THREE.BoxGeometry(wallThickness, doorHeight, doorWidth);
+            const leftDoor = new THREE.Mesh(leftDoorGeometry, wallMaterial);
+            leftDoor.position.set(length - wallThickness/2, doorHeight/2 + 1, doorWidth/2);
+            leftDoor.userData = { isLeftDoor: true, isOpen: false };
+            // Set pivot point for proper hinge rotation
+            leftDoor.geometry.translate(0, 0, -doorWidth/2);
+            containerMesh.add(leftDoor);
+            
+            // Right door (at back) - positioned for sideways opening
+            const rightDoor = new THREE.Mesh(leftDoorGeometry, wallMaterial);
+            rightDoor.position.set(length - wallThickness/2, doorHeight/2 + 1, width - doorWidth/2);
+            rightDoor.userData = { isRightDoor: true, isOpen: false };
+            // Set pivot point for proper hinge rotation
+            rightDoor.geometry.translate(0, 0, doorWidth/2);
+            containerMesh.add(rightDoor);
+            
+            // Door handles (horizontal orientation for back doors opening sideways)
+            const handleGeometry = new THREE.CylinderGeometry(0.5, 0.5, 3, 8);
+            const handleMaterial = new THREE.MeshPhongMaterial({ color: 0x444444, shininess: 100 });
+            
+            const leftHandle = new THREE.Mesh(handleGeometry, handleMaterial);
+            leftHandle.rotation.z = Math.PI / 2; // Horizontal handle
+            leftHandle.position.set(length + 1, doorHeight/2 + 1, doorWidth - 3);
+            containerMesh.add(leftHandle);
+            
+            const rightHandle = new THREE.Mesh(handleGeometry, handleMaterial);
+            rightHandle.rotation.z = Math.PI / 2; // Horizontal handle
+            rightHandle.position.set(length + 1, doorHeight/2 + 1, width - doorWidth + 3);
+            containerMesh.add(rightHandle);
+            
+            // Door hinges (vertical for back doors opening sideways)
+            const hingeGeometry = new THREE.CylinderGeometry(0.4, 0.4, doorHeight * 0.8, 8);
+            const hingeMaterial = new THREE.MeshPhongMaterial({ color: 0x333333, shininess: 80 });
+            
+            // Left door hinges (vertical, at the left edge of left door)
+            const leftHinge1 = new THREE.Mesh(hingeGeometry, hingeMaterial);
+            leftHinge1.position.set(length - 0.5, doorHeight/2 + 1, 2);
+            containerMesh.add(leftHinge1);
+            
+            // Right door hinges (vertical, at the right edge of right door)
+            const rightHinge1 = new THREE.Mesh(hingeGeometry, hingeMaterial);
+            rightHinge1.position.set(length - 0.5, doorHeight/2 + 1, width - 2);
+            containerMesh.add(rightHinge1);
+            
+            // Door locks/latches (center of back doors)
+            const lockGeometry = new THREE.BoxGeometry(1, 1, 2);
+            const lockMaterial = new THREE.MeshPhongMaterial({ color: 0x222222, shininess: 100 });
+            
+            const centerLock = new THREE.Mesh(lockGeometry, lockMaterial);
+            centerLock.position.set(length + 0.8, doorHeight/2 + 1, width/2);
+            containerMesh.add(centerLock);
+            
+            // Store door references for animation
+            containerMesh.userData.leftDoor = leftDoor;
+            containerMesh.userData.rightDoor = rightDoor;
+            containerMesh.userData.leftHandle = leftHandle;
+            containerMesh.userData.rightHandle = rightHandle;
+            containerMesh.userData.hinges = [leftHinge1, rightHinge1];
+            containerMesh.userData.lock = centerLock;
+            
+            // Top frame (no roof for loading visibility)
+            const frameGeometry = new THREE.BoxGeometry(length, 0.5, wallThickness);
+            const topFrame = new THREE.Mesh(frameGeometry, wallMaterial);
+            topFrame.position.set(length/2, height + 0.25, wallThickness/2);
+            containerMesh.add(topFrame);
+            
+            // REEFER COOLING UNIT at front
+            const coolingUnitGeometry = new THREE.BoxGeometry(length * 0.8, height * 0.3, 4);
+            const coolingUnitMaterial = new THREE.MeshPhongMaterial({
+                color: 0x2D3748,
+                shininess: 80
+            });
+            const coolingUnit = new THREE.Mesh(coolingUnitGeometry, coolingUnitMaterial);
+            coolingUnit.position.set(length/2, height * 0.85, -2);
+            containerMesh.add(coolingUnit);
+            
+            // Cooling unit vents
+            for (let i = 0; i < 8; i++) {
+                const ventGeometry = new THREE.BoxGeometry(length * 0.08, height * 0.02, 0.2);
+                const ventMaterial = new THREE.MeshPhongMaterial({ color: 0x1A202C });
+                const vent = new THREE.Mesh(ventGeometry, ventMaterial);
+                vent.position.set((length * 0.2) + (i * length * 0.08), height * 0.85, -4.1);
+                containerMesh.add(vent);
+            }
+            
+            // Temperature display panel
+            const panelGeometry = new THREE.BoxGeometry(8, 4, 0.5);
+            const panelMaterial = new THREE.MeshPhongMaterial({ color: 0x000000 });
+            const panel = new THREE.Mesh(panelGeometry, panelMaterial);
+            panel.position.set(length * 0.8, height * 0.7, -4.2);
+            containerMesh.add(panel);
+            
+            // Digital display
+            const displayCanvas = document.createElement('canvas');
+            displayCanvas.width = 128;
+            displayCanvas.height = 64;
+            const displayCtx = displayCanvas.getContext('2d');
+            
+            displayCtx.fillStyle = '#00FF00';
+            displayCtx.fillRect(0, 0, 128, 64);
+            displayCtx.fillStyle = '#000000';
+            displayCtx.font = 'bold 16px monospace';
+            displayCtx.textAlign = 'center';
+            displayCtx.fillText('TEMP', 64, 20);
+            displayCtx.fillText('-18°C', 64, 40);
+            displayCtx.fillText('ACTIVE', 64, 55);
+            
+            const displayTexture = new THREE.CanvasTexture(displayCanvas);
+            const displayMaterial = new THREE.MeshPhongMaterial({
+                map: displayTexture,
+                emissive: 0x002200
+            });
+            
+            const displayGeometry = new THREE.PlaneGeometry(6, 3);
+            const display = new THREE.Mesh(displayGeometry, displayMaterial);
+            display.position.set(length * 0.8, height * 0.7, -4.1);
+            containerMesh.add(display);
+            
+            // 3. CONTAINER MARKINGS AND DETAILS
+            
+            // Add container corner posts
+            const cornerPostGeometry = new THREE.BoxGeometry(1, height + 1, 1);
+            const cornerPostMaterial = new THREE.MeshPhongMaterial({
+                color: 0x2D3748,
+                shininess: 50
+            });
+            
+            // Four corner posts
+            const corners = [
+                [0.5, (height + 1)/2, 0.5],
+                [length - 0.5, (height + 1)/2, 0.5],
+                [0.5, (height + 1)/2, width - 0.5],
+                [length - 0.5, (height + 1)/2, width - 0.5]
+            ];
+            
+            corners.forEach(pos => {
+                const post = new THREE.Mesh(cornerPostGeometry, cornerPostMaterial);
+                post.position.set(pos[0], pos[1], pos[2]);
+                containerMesh.add(post);
+            });
+            
+            // Add container number/marking on the SIDE WALLS (always visible)
+            const markingCanvas = document.createElement('canvas');
+            markingCanvas.width = 256;
+            markingCanvas.height = 128;
+            const markingCtx = markingCanvas.getContext('2d');
+            
+            markingCtx.fillStyle = '#4A5568';
+            markingCtx.fillRect(0, 0, 256, 128);
+            
+            markingCtx.fillStyle = '#FFFFFF';
+            markingCtx.font = 'bold 24px Arial';
+            markingCtx.textAlign = 'center';
+            markingCtx.fillText('HITUNG', 128, 35);
+            markingCtx.fillText('CONTAINER', 128, 60);
+            markingCtx.fillText('PPIC-WKB', 128, 90);
+            
+            const markingTexture = new THREE.CanvasTexture(markingCanvas);
+            const markingMaterial = new THREE.MeshPhongMaterial({
+                map: markingTexture,
+                transparent: true
+            });
+            
+            // Left side wall marking - ATTACHED TO CONTAINER (always visible)
+            const leftSideMarkingGeometry = new THREE.PlaneGeometry(12, 6);
+            const leftSideMarking = new THREE.Mesh(leftSideMarkingGeometry, markingMaterial);
+            leftSideMarking.position.set(length/2, height/2, -0.2); // On left side wall
+            leftSideMarking.rotation.y = Math.PI / 2; // Face outward from left wall
+            containerMesh.add(leftSideMarking); // ATTACH TO CONTAINER - always visible
+            
+            // Right side wall marking - ATTACHED TO CONTAINER (always visible)
+            const rightSideMarkingGeometry = new THREE.PlaneGeometry(12, 6);
+            const rightSideMarking = new THREE.Mesh(rightSideMarkingGeometry, markingMaterial);
+            rightSideMarking.position.set(length/2, height/2, width + 0.2); // On right side wall
+            rightSideMarking.rotation.y = -Math.PI / 2; // Face outward from right wall
+            containerMesh.add(rightSideMarking); // ATTACH TO CONTAINER - always visible
+            
+            // 4. CONTAINER WIREFRAME OUTLINE
+            const outlineGeometry = new THREE.EdgesGeometry(new THREE.BoxGeometry(length, height, width));
+            const outlineMaterial = new THREE.LineBasicMaterial({
+                color: 0x1A202C,
+                linewidth: 3,
                 transparent: true,
                 opacity: 0.8
             });
-            containerMesh = new THREE.LineSegments(edges, material);
+            const outline = new THREE.LineSegments(outlineGeometry, outlineMaterial);
+            outline.position.set(length/2, height/2, width/2);
+            containerMesh.add(outline);
             
-            // Add semi-transparent container walls
-            const wallMaterial = new THREE.MeshPhongMaterial({
-                color: 0x3b82f6,
-                transparent: true,
-                opacity: 0.05,
-                side: THREE.DoubleSide
-            });
-            const containerWalls = new THREE.Mesh(geometry, wallMaterial);
-            containerMesh.add(containerWalls);
-            
-            containerMesh.position.set(
-                containerDimensions.length / 20,
-                containerDimensions.height / 20,
-                containerDimensions.width / 20
-            );
-            
+            // Position the entire container
+            containerMesh.position.set(0, 0, 0);
             scene.add(containerMesh);
         }
 
@@ -737,91 +1021,136 @@
                             emissive = 0x047857;
                         }
 
-                        // Create main box material with enhanced properties
-                        const boxMaterial = new THREE.MeshPhongMaterial({ 
-                            color: color,
-                            emissive: emissive,
-                            emissiveIntensity: 0.1,
-                            shininess: 30,
+                        // Create realistic browncraft cardboard box material
+                        const boxCanvas = document.createElement('canvas');
+                        boxCanvas.width = 256;
+                        boxCanvas.height = 256;
+                        const boxCtx = boxCanvas.getContext('2d');
+                        
+                        // Base browncraft cardboard color
+                        const baseColor = box.rotated ? '#8B4513' : '#D2B48C'; // Darker brown for rotated
+                        boxCtx.fillStyle = baseColor;
+                        boxCtx.fillRect(0, 0, 256, 256);
+                        
+                        // Add cardboard texture with corrugated pattern
+                        for (let i = 0; i < 256; i += 8) {
+                            const shade = i % 16 === 0 ? 'rgba(139, 69, 19, 0.3)' : 'rgba(160, 82, 45, 0.2)';
+                            boxCtx.fillStyle = shade;
+                            boxCtx.fillRect(i, 0, 4, 256);
+                        }
+                        
+                        // Add vertical corrugated lines
+                        for (let i = 0; i < 256; i += 16) {
+                            boxCtx.strokeStyle = 'rgba(101, 67, 33, 0.6)';
+                            boxCtx.lineWidth = 1;
+                            boxCtx.beginPath();
+                            boxCtx.moveTo(i, 0);
+                            boxCtx.lineTo(i, 256);
+                            boxCtx.stroke();
+                        }
+                        
+                        // Add wear and tear spots
+                        for (let i = 0; i < 8; i++) {
+                            boxCtx.fillStyle = `rgba(101, 67, 33, ${0.2 + Math.random() * 0.3})`;
+                            boxCtx.beginPath();
+                            boxCtx.arc(Math.random() * 256, Math.random() * 256, Math.random() * 8 + 3, 0, Math.PI * 2);
+                            boxCtx.fill();
+                        }
+                        
+                        // Add tape lines for box sealing
+                        boxCtx.strokeStyle = 'rgba(255, 215, 0, 0.8)'; // Golden tape color
+                        boxCtx.lineWidth = 6;
+                        boxCtx.beginPath();
+                        boxCtx.moveTo(0, 128);
+                        boxCtx.lineTo(256, 128);
+                        boxCtx.stroke();
+                        
+                        // Add vertical tape
+                        boxCtx.beginPath();
+                        boxCtx.moveTo(128, 0);
+                        boxCtx.lineTo(128, 256);
+                        boxCtx.stroke();
+                        
+                        // Add box orientation indicator
+                        if (box.rotated) {
+                            // Rotation arrow for rotated boxes
+                            boxCtx.strokeStyle = 'rgba(255, 0, 0, 0.8)';
+                            boxCtx.lineWidth = 4;
+                            boxCtx.beginPath();
+                            boxCtx.arc(64, 64, 20, 0, Math.PI * 1.5);
+                            boxCtx.stroke();
+                            
+                            // Arrow head
+                            boxCtx.beginPath();
+                            boxCtx.moveTo(84, 64);
+                            boxCtx.lineTo(78, 58);
+                            boxCtx.moveTo(84, 64);
+                            boxCtx.lineTo(78, 70);
+                            boxCtx.stroke();
+                        }
+                        
+                        // Add shipping label
+                        boxCtx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+                        boxCtx.fillRect(160, 160, 80, 60);
+                        boxCtx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
+                        boxCtx.lineWidth = 2;
+                        boxCtx.strokeRect(160, 160, 80, 60);
+                        
+                        // Label text
+                        boxCtx.fillStyle = 'rgba(0, 0, 0, 0.9)';
+                        boxCtx.font = 'bold 12px Arial';
+                        boxCtx.textAlign = 'center';
+                        boxCtx.fillText('FRAGILE', 200, 180);
+                        boxCtx.font = '10px Arial';
+                        boxCtx.fillText(`S${layerIndex + 1}-${rowIndex + 1}-${colIndex + 1}`, 200, 195);
+                        boxCtx.fillText(box.rotated ? 'ROTATED' : 'NORMAL', 200, 210);
+                        
+                        // Add "THIS SIDE UP" arrow if not rotated
+                        if (!box.rotated) {
+                            boxCtx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
+                            boxCtx.lineWidth = 3;
+                            boxCtx.beginPath();
+                            boxCtx.moveTo(40, 200);
+                            boxCtx.lineTo(40, 160);
+                            boxCtx.moveTo(30, 170);
+                            boxCtx.lineTo(40, 160);
+                            boxCtx.lineTo(50, 170);
+                            boxCtx.stroke();
+                            
+                            boxCtx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+                            boxCtx.font = 'bold 8px Arial';
+                            boxCtx.textAlign = 'center';
+                            boxCtx.fillText('THIS', 40, 220);
+                            boxCtx.fillText('SIDE', 40, 230);
+                            boxCtx.fillText('UP', 40, 240);
+                        }
+                        
+                        const boxTexture = new THREE.CanvasTexture(boxCanvas);
+                        boxTexture.wrapS = THREE.RepeatWrapping;
+                        boxTexture.wrapT = THREE.RepeatWrapping;
+                        
+                        // Create realistic cardboard material
+                        const boxMaterial = new THREE.MeshPhongMaterial({
+                            map: boxTexture,
+                            color: 0xD2B48C, // Tan/browncraft color
+                            shininess: 5, // Low shininess for cardboard
                             transparent: true,
-                            opacity: 0.85,
+                            opacity: 0.95,
                             side: THREE.DoubleSide
                         });
 
                         const boxMesh = new THREE.Mesh(boxGeometry, boxMaterial);
                         
-                        // Add wireframe edges for clearer borders
+                        // Add realistic cardboard edges
                         const edges = new THREE.EdgesGeometry(boxGeometry);
                         const edgeMaterial = new THREE.LineBasicMaterial({ 
-                            color: 0x000000, 
+                            color: 0x8B4513, // Dark brown edges
                             linewidth: 2,
                             transparent: true,
-                            opacity: 0.8
+                            opacity: 0.9
                         });
                         const wireframe = new THREE.LineSegments(edges, edgeMaterial);
                         boxMesh.add(wireframe);
-                        
-                        // Add texture pattern using canvas
-                        const canvas = document.createElement('canvas');
-                        canvas.width = 64;
-                        canvas.height = 64;
-                        const ctx = canvas.getContext('2d');
-                        
-                        // Create texture pattern based on box type
-                        ctx.fillStyle = `#${color.toString(16).padStart(6, '0')}`;
-                        ctx.fillRect(0, 0, 64, 64);
-                        
-                        // Add pattern overlay
-                        ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
-                        ctx.lineWidth = 1;
-                        
-                        if (box.rotated) {
-                            // Diagonal lines for rotated boxes
-                            for (let i = 0; i < 64; i += 8) {
-                                ctx.beginPath();
-                                ctx.moveTo(i, 0);
-                                ctx.lineTo(i + 32, 32);
-                                ctx.stroke();
-                            }
-                        } else if (box.zigzag) {
-                            // Zigzag pattern
-                            ctx.beginPath();
-                            for (let i = 0; i < 64; i += 8) {
-                                ctx.moveTo(i, 16);
-                                ctx.lineTo(i + 4, 32);
-                                ctx.lineTo(i + 8, 16);
-                            }
-                            ctx.stroke();
-                        } else if (box.offset) {
-                            // Hexagonal pattern
-                            ctx.beginPath();
-                            ctx.arc(32, 32, 12, 0, Math.PI * 2);
-                            ctx.stroke();
-                        } else {
-                            // Grid pattern for normal boxes
-                            for (let i = 0; i < 64; i += 16) {
-                                ctx.beginPath();
-                                ctx.moveTo(i, 0);
-                                ctx.lineTo(i, 64);
-                                ctx.moveTo(0, i);
-                                ctx.lineTo(64, i);
-                                ctx.stroke();
-                            }
-                        }
-                        
-                        // Add box number/label
-                        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-                        ctx.font = 'bold 12px Arial';
-                        ctx.textAlign = 'center';
-                        ctx.fillText(`${layerIndex + 1}-${rowIndex + 1}-${colIndex + 1}`, 32, 36);
-                        
-                        const texture = new THREE.CanvasTexture(canvas);
-                        texture.wrapS = THREE.RepeatWrapping;
-                        texture.wrapT = THREE.RepeatWrapping;
-                        texture.repeat.set(1, 1);
-                        
-                        boxMaterial.map = texture;
-                        boxMaterial.needsUpdate = true;
                         
                         // Position calculation
                         const boxWidth = (box.rotated ? boxDimensions.width : boxDimensions.length) / 10;
@@ -913,7 +1242,7 @@
             let html = `
                 <div class="w-full jiffy-zoom-in" style="background: linear-gradient(135deg, #1e293b 0%, #334155 50%, #475569 100%); border-radius: 24px; padding: ${isMobile ? '24px' : '40px'}; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);">
                     <div class="mb-6 text-center">
-                        <h4 class="text-xl lg:text-2xl font-bold text-white mb-2">Layout Visualization</h4>
+                        <h4 class="text-xl lg:text-2xl font-bold text-white mb-2">📐 Layout Visualization</h4>
                         <p class="text-sm lg:text-base text-slate-300">Tampak belakang kontainer dengan penataan MC optimal</p>
                     </div>
                     
@@ -1253,7 +1582,7 @@
                             <g transform="translate(40, 40)">
                                 <text x="0" y="0" class="${isMobile ? 'text-xs' : 'text-sm'} font-semibold fill-slate-300" 
                                       style="font-family: 'Inter', sans-serif;">
-                                    📦 ${showAllLayers ? `${optimal.totalBoxes} kotak (${optimal.boxesPerLayer} per sap)` : `${optimal.boxesPerLayer} kotak di sap ini`}
+                                    📦 ${showAllLayers ? `${optimal.totalBoxes} MC (${optimal.boxesPerLayer} per sap)` : `${optimal.boxesPerLayer} MC di sap ini`}
                                 </text>
                                 
                                 <text x="${(svgWidth - 80) / 3}" y="0" class="${isMobile ? 'text-xs' : 'text-sm'} font-semibold fill-slate-300" 
@@ -1298,7 +1627,7 @@
                         </div>
                         ` : `
                         <div class="flex items-center gap-2 text-slate-300 text-sm">
-                            <span>💡 Tips: Hover kotak untuk detail, gunakan layer controls untuk navigasi</span>
+                            <span>💡 Tips: Hover MC untuk detail, gunakan layer controls untuk navigasi</span>
                         </div>
                         `}
                     </div>
@@ -1374,6 +1703,17 @@
                     tab.disabled = true;
                     tab.classList.add('opacity-50');
                 });
+                
+                // Auto-open doors when showing all layers in 3D mode
+                if (currentVisualizationMode === '3d' && containerMesh && containerMesh.userData.leftDoor) {
+                    const isOpen = containerMesh.userData.leftDoor.userData.isOpen;
+                    if (!isOpen) {
+                        // Automatically open doors
+                        setTimeout(() => {
+                            toggleContainerDoors();
+                        }, 500);
+                    }
+                }
             } else {
                 document.getElementById('layerSlider').disabled = false;
                 document.querySelectorAll('.layer-tab').forEach(tab => {
@@ -1422,14 +1762,203 @@
             });
         }
 
-        function exportToPDF() {
-            showJiffyAlert('Fitur export PDF sedang dalam pengembangan', 'info');
+        function toggleContainerDoors() {
+            if (!containerMesh || !containerMesh.userData.leftDoor) return;
             
-            // Add button animation
-            const button = event.target;
+            const leftDoor = containerMesh.userData.leftDoor;
+            const rightDoor = containerMesh.userData.rightDoor;
+            const leftHandle = containerMesh.userData.leftHandle;
+            const rightHandle = containerMesh.userData.rightHandle;
+            const hinges = containerMesh.userData.hinges;
+            const lock = containerMesh.userData.lock;
+            const button = document.getElementById('doorToggleBtn');
+            
+            const isOpen = leftDoor.userData.isOpen;
+            const targetAngle = isOpen ? 0 : Math.PI * 0.8; // 144 degrees for wider opening
+            
+            // Animate doors (for reefer container - doors at back opening sideways)
+            const animateDoors = () => {
+                const duration = 2000; // 2 seconds for smoother animation
+                const startTime = Date.now();
+                const startAngleLeft = leftDoor.rotation.y; // Use Y rotation for sideways opening
+                const startAngleRight = rightDoor.rotation.y;
+                const startPosLeft = leftDoor.position.z;
+                const startPosRight = rightDoor.position.z;
+                
+                // Calculate door movement for proper hinge behavior
+                const containerWidth = calculationResults.containerDimensions.width / 10;
+                const doorWidth = containerWidth * 0.45;
+                
+                const animate = () => {
+                    const elapsed = Date.now() - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    
+                    // Smooth easing function with bounce
+                    const easeInOut = progress < 0.5 
+                        ? 4 * progress * progress * progress
+                        : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+                    
+                    if (isOpen) {
+                        // Closing doors (back to center)
+                        leftDoor.rotation.y = startAngleLeft * (1 - easeInOut);
+                        rightDoor.rotation.y = startAngleRight * (1 - easeInOut);
+                        
+                        // Move doors back to original position
+                        leftDoor.position.z = startPosLeft + (doorWidth/2 * easeInOut);
+                        rightDoor.position.z = startPosRight - (doorWidth/2 * easeInOut);
+                        
+                        // Animate handles
+                        if (leftHandle) {
+                            leftHandle.rotation.y = startAngleLeft * (1 - easeInOut);
+                            leftHandle.position.z = leftDoor.position.z - 3;
+                        }
+                        if (rightHandle) {
+                            rightHandle.rotation.y = startAngleRight * (1 - easeInOut);
+                            rightHandle.position.z = rightDoor.position.z + 3;
+                        }
+                        
+                        // Animate lock back to center
+                        if (lock) {
+                            lock.position.z = containerWidth/2;
+                            lock.scale.x = 1 + (0.3 * (1 - easeInOut));
+                        }
+                    } else {
+                        // Opening doors (left door opens left, right door opens right)
+                        leftDoor.rotation.y = -targetAngle * easeInOut;
+                        rightDoor.rotation.y = targetAngle * easeInOut;
+                        
+                        // Move doors outward from hinges (realistic hinge behavior)
+                        const leftOffset = Math.sin(targetAngle * easeInOut) * doorWidth * 0.8;
+                        const rightOffset = Math.sin(targetAngle * easeInOut) * doorWidth * 0.8;
+                        
+                        leftDoor.position.z = startPosLeft - leftOffset;
+                        rightDoor.position.z = startPosRight + rightOffset;
+                        
+                        // Animate handles to follow doors
+                        if (leftHandle) {
+                            leftHandle.rotation.y = -targetAngle * easeInOut;
+                            leftHandle.position.z = leftDoor.position.z - 3;
+                        }
+                        if (rightHandle) {
+                            rightHandle.rotation.y = targetAngle * easeInOut;
+                            rightHandle.position.z = rightDoor.position.z + 3;
+                        }
+                        
+                        // Animate lock opening (split apart)
+                        if (lock) {
+                            lock.position.z = containerWidth/2;
+                            lock.scale.x = 1 + (0.5 * easeInOut); // Stretch horizontally
+                            lock.material.opacity = 1 - (0.7 * easeInOut); // Fade out
+                        }
+                    }
+                    
+                    if (progress < 1) {
+                        requestAnimationFrame(animate);
+                    } else {
+                        // Animation complete
+                        leftDoor.userData.isOpen = !isOpen;
+                        rightDoor.userData.isOpen = !isOpen;
+                        button.textContent = isOpen ? '🚪 Buka Pintu' : '🚪 Tutup Pintu';
+                        button.disabled = false;
+                        button.classList.remove('jiffy-pulse');
+                        
+                        // Update box visibility when doors open/close
+                        updateBoxVisibilityForDoors(!isOpen);
+                        
+                        showJiffyAlert(isOpen ? 'Pintu reefer container ditutup' : 'Pintu reefer container dibuka', 'success');
+                    }
+                };
+                
+                animate();
+            };
+            
+            // Start animation
+            button.disabled = true;
             button.classList.add('jiffy-pulse');
-            setTimeout(() => button.classList.remove('jiffy-pulse'), 2000);
+            button.textContent = isOpen ? '⏳ Menutup...' : '⏳ Membuka...';
+            
+            animateDoors();
         }
+
+        function updateBoxVisibilityForDoors(doorsOpen) {
+            if (!boxMeshes.length) return;
+            
+            const showAllLayers = document.getElementById('showAllLayers').checked;
+            
+            // MC SELALU SOLID - tidak berubah opacity saat pintu buka/tutup
+            boxMeshes.forEach(mesh => {
+                // MC selalu solid dengan opacity penuh
+                mesh.material.opacity = 1.0;
+                mesh.material.transparent = false;
+                
+                if (doorsOpen && showAllLayers) {
+                    // Hanya tambahkan glow effect untuk highlight saat pintu terbuka
+                    const boxLayerIndex = Math.floor(mesh.position.x / (calculationResults.boxDimensions.length / 10));
+                    const totalLayers = calculationResults.optimal.layers;
+                    
+                    if (boxLayerIndex >= totalLayers - 2) {
+                        // Last 2 layers - add blue glow
+                        if (mesh.material.emissive) {
+                            mesh.material.emissive.setHex(0x003366);
+                            mesh.material.emissiveIntensity = 0.3;
+                        }
+                    } else if (boxLayerIndex >= totalLayers - 4) {
+                        // Middle layers - light glow
+                        if (mesh.material.emissive) {
+                            mesh.material.emissive.setHex(0x001122);
+                            mesh.material.emissiveIntensity = 0.1;
+                        }
+                    }
+                } else if (doorsOpen) {
+                    // Single layer - slight highlight
+                    if (mesh.material.emissive) {
+                        mesh.material.emissive.setHex(0x002244);
+                        mesh.material.emissiveIntensity = 0.2;
+                    }
+                } else {
+                    // Remove glow when doors closed
+                    if (mesh.material.emissive) {
+                        mesh.material.emissive.setHex(0x000000);
+                        mesh.material.emissiveIntensity = 0;
+                    }
+                }
+            });
+            
+            // Handle container walls - ONLY back area transparency changes
+            if (containerMesh) {
+                containerMesh.children.forEach(child => {
+                    if (child.material && child.material.opacity !== undefined) {
+                        const containerLength = calculationResults.containerDimensions.length / 10;
+                        
+                        if (doorsOpen) {
+                            // Only affect elements at the BACK of the container (where doors are)
+                            if (child.position.x >= containerLength - 2) {
+                                if (child.userData && (child.userData.isLeftDoor || child.userData.isRightDoor)) {
+                                    // Doors themselves - keep visible but slightly transparent
+                                    child.material.opacity = 0.7;
+                                    child.material.transparent = true;
+                                } else {
+                                    // Back wall elements - make completely transparent (100%)
+                                    child.material.opacity = 0.0;
+                                    child.material.transparent = true;
+                                    child.visible = false; // Hide completely for 100% transparency
+                                }
+                            }
+                            // All other walls remain SOLID - no changes
+                        } else {
+                            // Doors closed - restore ALL walls to original opacity
+                            if (child.material.map) {
+                                child.material.opacity = 0.9;
+                                child.material.transparent = true;
+                                child.visible = true; // Make sure all walls are visible again
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        
 
         // Window resize handler
         window.addEventListener('resize', function() {
@@ -1440,3 +1969,4 @@
                 renderer.setSize(threejsContainer.clientWidth, 600);
             }
         });
+    
